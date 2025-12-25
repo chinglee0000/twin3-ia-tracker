@@ -1,0 +1,4106 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twin3 IA Dev Tracker</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* ============================================================
+               COLOR PALETTE — Material Design 3 Inspired
+               ============================================================ */
+            
+            /* Primary Colors - White to Gray Gradient */
+            --color-primary-50: #ffffff;
+            --color-primary-100: #f8f9fa;
+            --color-primary-200: #e9ecef;
+            --color-primary-300: #dee2e6;
+            --color-primary-400: #ced4da;
+            --color-primary-500: #adb5bd;
+            --color-primary-600: #8e8e93;
+            --color-primary-700: #6c757d;
+            --color-primary-800: #495057;
+            --color-primary-900: #343a40;
+            
+            /* Secondary Colors - Subtle Accent */
+            --color-secondary-50: #f0f0f0;
+            --color-secondary-100: #e0e0e0;
+            --color-secondary-200: #c2c2c2;
+            --color-secondary-300: #a3a3a3;
+            --color-secondary-400: #858585;
+            --color-secondary-500: #666666;
+            --color-secondary-600: #525252;
+            --color-secondary-700: #3d3d3d;
+            --color-secondary-800: #292929;
+            --color-secondary-900: #141414;
+            
+            /* Semantic Colors */
+            --color-success: #30d158;
+            --color-warning: #ff9f0a;
+            --color-error: #ff3b30;
+            --color-info: #007aff;
+            
+            /* Neutral Colors */
+            --color-black: #000000;
+            --color-white: #ffffff;
+            --color-gray-50: #f9fafb;
+            --color-gray-100: #f3f4f6;
+            --color-gray-200: #e5e7eb;
+            --color-gray-300: #d1d5db;
+            --color-gray-400: #9ca3af;
+            --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563;
+            --color-gray-700: #374151;
+            --color-gray-800: #1f2937;
+            --color-gray-900: #111827;
+            
+            /* Background Colors - Using existing values but with new naming */
+            --bg-primary: #0f1014;
+            --bg-surface: #1a1c22;
+            --bg-sidebar: #111216;
+            --bg-card: #252830;
+            
+            /* Accent Colors - Keeping existing for compatibility */
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a78bfa;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-pink: #ec4899;
+            
+            /* Text Colors */
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --border-color: #3f3f46;
+            
+            /* ============================================================
+               SPACING SYSTEM — 8px Base Grid
+               ============================================================ */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+            --space-3xl: 64px;
+            --space-4xl: 80px;
+            
+            /* ============================================================
+               TYPOGRAPHY SYSTEM
+               ============================================================ */
+            --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-size-xs: 12px;
+            --font-size-sm: 14px;
+            --font-size-base: 16px;
+            --font-size-lg: 18px;
+            --font-size-xl: 20px;
+            --font-size-2xl: 24px;
+            --font-size-3xl: 30px;
+            --font-size-4xl: 36px;
+            --font-weight-normal: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 500;
+            
+            /* ============================================================
+               SHADOW SYSTEM
+               ============================================================ */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.32);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.56);
+            --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.64);
+            
+            /* ============================================================
+               BORDER RADIUS SYSTEM
+               ============================================================ */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+            
+            /* ============================================================
+               GLASSMORPHISM TOKENS
+               ============================================================ */
+            --glass-bg: rgba(28, 28, 30, 0.72);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-blur: 40px;
+            
+            /* Layout */
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-normal);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar.collapsed .sidebar-title,
+        .sidebar.collapsed .nav-label,
+        .sidebar.collapsed .nav-category {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .sidebar.collapsed .nav-icon {
+            margin-right: 0;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            justify-content: center;
+            padding: 0 14px;
+        }
+
+        .sidebar.collapsed .sidebar-toggle {
+            opacity: 0;
+            position: absolute;
+            right: 8px;
+        }
+
+        .sidebar.collapsed .sidebar-header:hover .sidebar-toggle {
+            opacity: 1;
+        }
+
+        .sidebar.collapsed .sidebar-header:hover .logo-icon {
+            display: none;
+        }
+
+        .sidebar-header {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-md);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-semibold);
+            border-bottom: 1px solid var(--border-color);
+            gap: var(--space-sm);
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sidebar-toggle {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: var(--space-sm);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .sidebar.collapsed .sidebar-toggle {
+            margin-left: 0;
+        }
+
+        .sidebar-nav {
+            padding: 16px 12px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed .sidebar-nav {
+            padding: 16px 8px;
+        }
+
+        .nav-category {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin: 16px 8px 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: var(--font-size-sm);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* Responsive Design */
+        .mobile-menu-btn {
+            display: none !important;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 12px;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            backdrop-filter: blur(2px);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Tablet (768px - 1024px) */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 60px;
+                /* Default collapsed on tablet */
+            }
+
+            /* Re-use collapsed styles for tablet default */
+            .sidebar .sidebar-title,
+            .sidebar .nav-label,
+            .sidebar .nav-category {
+                display: none;
+            }
+
+            .sidebar .nav-item {
+                justify-content: center;
+                padding: 10px;
+            }
+
+            .sidebar .nav-icon {
+                margin-right: 0;
+            }
+
+            .sidebar .sidebar-header {
+                justify-content: center;
+                padding: 0 14px;
+            }
+
+            .sidebar .sidebar-toggle {
+                opacity: 0;
+                position: absolute;
+                right: 8px;
+            }
+
+            .sidebar .sidebar-header:hover .sidebar-toggle {
+                opacity: 1;
+            }
+
+            .sidebar .sidebar-header:hover .logo-icon {
+                display: none;
+            }
+
+            /* Allow expansion on hover or toggle click if we wanted, 
+               but for now let's reuse the 'collapsed' class logic via JS 
+               or just force CSS. 
+               BETTER APPROACH: Let JS handle the class 'collapsed' based on screen size.
+               So I will remove specific CSS overrides here and rely on adding 'collapsed' in JS.
+               Except for Mobile.
+            */
+        }
+
+        /* Mobile (< 768px) */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                height: 100vh;
+                z-index: 100;
+                width: 260px !important;
+                /* Force full width drawer */
+                box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+            }
+
+            .sidebar.mobile-open {
+                left: 0;
+            }
+
+            /* Restore contents in mobile drawer even if it was collapsed */
+            .sidebar.mobile-open .sidebar-title,
+            .sidebar.mobile-open .nav-label,
+            .sidebar.mobile-open .nav-category {
+                display: block !important;
+            }
+
+            .sidebar.mobile-open .nav-item {
+                justify-content: flex-start !important;
+                padding: 12px 16px !important;
+            }
+
+            .sidebar.mobile-open .nav-icon {
+                margin-right: 12px !important;
+            }
+
+            .sidebar.mobile-open .sidebar-header {
+                justify-content: flex-start !important;
+                padding: 0 24px !important;
+            }
+
+            .sidebar.mobile-open .logo-icon {
+                display: block !important;
+            }
+
+            .sidebar.mobile-open .sidebar-toggle {
+                display: none !important;
+                /* Hide collapse toggle on mobile */
+            }
+
+            .mobile-menu-btn {
+                display: block !important;
+            }
+
+            .main-header {
+                padding: 0 16px;
+            }
+
+            .page-title {
+                font-size: 18px;
+            }
+        }
+
+        .nav-icon {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Main */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            height: 80px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            box-sizing: border-box;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .main-header {
+            height: 80px;
+            padding: 0 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            /* Add gap between elements */
+            box-sizing: border-box;
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .breadcrumb {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+            /* Prevent it from being too wide on mobile */
+        }
+
+        @media (min-width: 768px) {
+            .breadcrumb {
+                max-width: none;
+            }
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 500;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 32px;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--bg-surface);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px 10px 36px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .filter-select {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 130px;
+        }
+
+        /* Tables */
+        .table-card {
+            background: var(--bg-surface);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            overflow-x: auto;
+            /* Enable horizontal scroll */
+            margin-bottom: 24px;
+        }
+
+        .table-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 20px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 14px;
+            text-transform: uppercase;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            user-select: none;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        th:hover {
+            color: var(--color-white);
+        }
+
+        th .sort-icon {
+            margin-left: 4px;
+            opacity: 0.5;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+            text-align: left;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .text-secondary {
+            color: var(--text-secondary);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            -webkit-background-clip: padding-box;
+            background-clip: padding-box;
+        }
+
+        .badge-cyan {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .badge-purple {
+            background: rgba(124, 58, 237, 0.15);
+            color: var(--accent-purple);
+        }
+
+        .badge-green {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        .badge-orange {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-orange);
+        }
+
+        .badge-pink {
+            background: rgba(236, 72, 153, 0.15);
+            color: var(--accent-pink);
+        }
+
+        .badge-gray {
+            background: rgba(161, 161, 170, 0.15);
+            color: var(--text-secondary);
+        }
+
+        /* Checkbox */
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .checkbox.checked {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+        }
+
+        .checkbox.checked i {
+            color: #000;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-white);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Mermaid */
+        /* Mermaid Flowchart Customization - Task 7 */
+        .mermaid-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--space-xl);
+            overflow-x: auto;
+            margin-bottom: var(--space-xl);
+            text-align: center;
+            position: relative;
+        }
+        
+        .mermaid-box .expand-hint {
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            background: transparent;
+            border: 1px solid var(--color-white);
+            border-radius: var(--radius-sm);
+            padding: var(--space-xs) var(--space-sm);
+            font-size: var(--font-size-xs);
+            color: var(--color-white);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            opacity: 0.8;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .mermaid-box .expand-hint i {
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+        
+        .mermaid-box .expand-hint:hover {
+            opacity: 1;
+        }
+        
+        .mermaid-box h3 {
+            color: var(--text-primary);
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+        
+        /* Mermaid Theme Customization */
+        .mermaid {
+            font-family: var(--font-family-sans) !important;
+        }
+        
+        /* Force white text color for all mermaid text elements */
+        .mermaid text,
+        .mermaid .nodeLabel,
+        .mermaid .label,
+        .mermaid .edgeLabel,
+        .mermaid tspan,
+        .mermaid foreignObject,
+        .mermaid foreignObject div,
+        .mermaid foreignObject span,
+        .mermaid .node foreignObject div {
+            fill: var(--text-primary) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        /* Custom Mermaid Styles for Design System Integration - Stroke Only, No Fill */
+        .mermaid .node rect,
+        .mermaid .node circle,
+        .mermaid .node ellipse,
+        .mermaid .node polygon {
+            fill: transparent !important;
+            stroke: var(--border-color) !important;
+            stroke-width: 1px !important;
+        }
+        
+        .mermaid .node .label {
+            color: var(--text-primary) !important;
+            font-family: var(--font-family-sans) !important;
+            font-size: var(--font-size-sm) !important;
+            font-weight: var(--font-weight-medium) !important;
+        }
+        
+        /* Semantic State Colors for Flowchart Nodes - Stroke Only */
+        .mermaid .node.primary rect,
+        .mermaid .node.primary circle,
+        .mermaid .node.primary ellipse {
+            fill: transparent !important;
+            stroke: var(--accent-cyan) !important;
+            stroke-width: 1px !important;
+        }
+        
+        .mermaid .node.primary .label {
+            color: var(--accent-cyan) !important;
+            font-weight: var(--font-weight-semibold) !important;
+        }
+        
+        .mermaid .node.success rect,
+        .mermaid .node.success circle,
+        .mermaid .node.success ellipse {
+            fill: transparent !important;
+            stroke: var(--color-success) !important;
+            stroke-width: 1px !important;
+        }
+        
+        .mermaid .node.success .label {
+            color: var(--color-success) !important;
+            font-weight: var(--font-weight-semibold) !important;
+        }
+        
+        .mermaid .node.warning rect,
+        .mermaid .node.warning circle,
+        .mermaid .node.warning ellipse {
+            fill: transparent !important;
+            stroke: var(--color-warning) !important;
+            stroke-width: 1px !important;
+        }
+        
+        .mermaid .node.warning .label {
+            color: var(--color-warning) !important;
+            font-weight: var(--font-weight-semibold) !important;
+        }
+        
+        .mermaid .node.error rect,
+        .mermaid .node.error circle,
+        .mermaid .node.error ellipse {
+            fill: transparent !important;
+            stroke: var(--color-error) !important;
+            stroke-width: 1px !important;
+        }
+        
+        .mermaid .node.error .label {
+            color: var(--color-error) !important;
+            font-weight: var(--font-weight-semibold) !important;
+        }
+        
+        /* Flowchart Edge Styling */
+        .mermaid .edgePath .path {
+            stroke: var(--color-gray-500) !important;
+            stroke-width: 2px !important;
+            fill: none !important;
+        }
+        
+        /* Arrow markers */
+        .mermaid marker path {
+            fill: var(--color-gray-500) !important;
+            stroke: var(--color-gray-500) !important;
+        }
+        
+        .mermaid .edgeLabel {
+            background-color: var(--bg-card) !important;
+            color: var(--text-primary) !important;
+            font-family: var(--font-family-sans) !important;
+            font-size: var(--font-size-xs) !important;
+            font-weight: var(--font-weight-medium) !important;
+            padding: var(--space-xs) var(--space-sm) !important;
+            border-radius: var(--radius-sm) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+        
+        /* Subgraph Styling - Stroke Only, Solid Line */
+        .mermaid .cluster rect {
+            fill: transparent !important;
+            stroke: var(--glass-border) !important;
+            stroke-width: 1px !important;
+            rx: var(--radius-md) !important;
+            ry: var(--radius-md) !important;
+        }
+        
+        .mermaid .cluster .label {
+            color: var(--text-primary) !important;
+            font-family: var(--font-family-sans) !important;
+            font-size: var(--font-size-sm) !important;
+            font-weight: var(--font-weight-semibold) !important;
+        }
+        
+        /* Interactive Flowchart Elements */
+        .mermaid .node:hover rect,
+        .mermaid .node:hover circle,
+        .mermaid .node:hover ellipse,
+        .mermaid .node:hover polygon {
+            stroke-width: 2px !important;
+            transition: all 0.2s ease !important;
+        }
+        
+        .mermaid .edgePath:hover .path {
+            stroke: var(--color-white) !important;
+            stroke-width: 3px !important;
+            transition: all 0.2s ease !important;
+        }
+        
+        /* Flowchart Responsive Design */
+        @media (max-width: 768px) {
+            .mermaid-box {
+                padding: var(--space-md);
+                overflow-x: scroll;
+            }
+            
+            .mermaid {
+                min-width: 600px;
+            }
+        }
+        
+        /* Flowchart Modal - Full Screen View */
+        .flowchart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            padding: var(--space-xl);
+            overflow: auto;
+        }
+        
+        .flowchart-modal.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .flowchart-modal-header {
+            width: 100%;
+            max-width: 1400px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .flowchart-modal-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+        }
+        
+        /* Flowchart modal close button - uses same style as btn-primary */
+        .flowchart-modal-close {
+            background: transparent;
+            border: 1px solid var(--color-white);
+            border-radius: var(--radius-sm);
+            color: var(--color-white);
+            padding: var(--space-sm) var(--space-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: var(--font-size-sm);
+            transition: all 0.2s;
+            opacity: 0.8;
+        }
+        
+        .flowchart-modal-close:hover {
+            background: transparent;
+            border-color: var(--color-white);
+            color: var(--color-white);
+            opacity: 1;
+        }
+        
+        .flowchart-modal-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-2xl);
+            max-width: 1400px;
+            width: 100%;
+            overflow: auto;
+        }
+        
+        .flowchart-modal-content .mermaid {
+            font-family: var(--font-family-sans) !important;
+        }
+        
+        /* Modal mermaid - larger font for full view */
+        .flowchart-modal-content .mermaid .node .label,
+        .flowchart-modal-content .mermaid text,
+        .flowchart-modal-content .mermaid .nodeLabel,
+        .flowchart-modal-content .mermaid .label,
+        .flowchart-modal-content .mermaid foreignObject div {
+            font-size: 16px !important;
+            font-family: var(--font-family-sans) !important;
+        }
+        
+        .flowchart-modal-content .mermaid .cluster .label {
+            font-size: 18px !important;
+        }
+        
+        .flowchart-modal-content .mermaid .edgeLabel {
+            font-size: 14px !important;
+        }
+
+        /* Section */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        /* Code */
+        code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #d2a8ff;
+        }
+
+        /* Language Toggle Button */
+        .lang-btn:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: var(--color-primary-400) !important;
+            transform: translateY(-1px);
+        }
+
+        /* Icon System - Standardized Sizes */
+        .icon-xs { width: 14px; height: 14px; }
+        .icon-sm { width: 16px; height: 16px; }
+        .icon-md { width: 18px; height: 18px; }
+        .icon-lg { width: 20px; height: 20px; }
+        .icon-xl { width: 24px; height: 24px; }
+        
+        /* Sort icons should be small and vertically aligned */
+        .sort-icon { 
+            width: 14px !important; 
+            height: 14px !important; 
+            margin-left: 4px; 
+            opacity: 0.5;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        /* URL */
+        .url {
+            color: var(--accent-cyan);
+            font-size: 12px;
+        }
+
+        /* ============================================================
+           COMPONENT LIBRARY STYLES - Task 6
+           ============================================================ */
+        
+        /* Button System - Standardized Classes */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            font-family: var(--font-family-sans);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            user-select: none;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        /* Primary Button - White stroke, white text, transparent bg, 80% opacity */
+        .btn.btn-primary {
+            background: transparent !important;
+            color: var(--color-white) !important;
+            border: 1px solid var(--color-white) !important;
+            opacity: 0.8;
+        }
+        
+        .btn.btn-primary:hover:not(:disabled) {
+            background: transparent !important;
+            color: var(--color-white) !important;
+            border-color: var(--color-white) !important;
+            opacity: 1;
+            transform: translateY(-1px);
+        }
+        
+        .btn.btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        /* Secondary Button */
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--color-white);
+            transform: translateY(-1px);
+        }
+        
+        /* Ghost Button */
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+        }
+        
+        .btn-ghost:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+        
+        /* Button Sizes */
+        .btn-sm {
+            padding: var(--space-xs) var(--space-sm);
+            font-size: var(--font-size-xs);
+            gap: var(--space-xs);
+        }
+        
+        .btn-lg {
+            padding: var(--space-md) var(--space-lg);
+            font-size: var(--font-size-base);
+            gap: var(--space-sm);
+        }
+        
+        /* Card System - Enhanced Glassmorphism */
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            overflow-x: auto;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card-body {
+            padding: var(--space-lg);
+        }
+        
+        .card-footer {
+            padding: var(--space-lg);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: var(--space-sm);
+        }
+        
+        /* Widget Card Specific Styles */
+        .widget-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .widget-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--color-white);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .widget-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        
+        .widget-card:hover::before {
+            opacity: 1;
+        }
+        
+        .widget-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .widget-description {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            line-height: 1.5;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .widget-actions {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+        
+        /* Progress Components */
+        .progress-ring {
+            width: 80px;
+            height: 80px;
+            position: relative;
+        }
+        
+        .progress-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 4;
+        }
+        
+        .progress-ring .progress-bg {
+            stroke: var(--color-gray-700);
+        }
+        
+        .progress-ring .progress-fill {
+            stroke: url(#progressGradient);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+        }
+        
+        /* Status Indicators */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-full);
+            display: inline-block;
+            margin-right: var(--space-xs);
+        }
+        
+        .status-dot.active {
+            background: var(--color-success);
+            box-shadow: 0 0 8px rgba(48, 209, 88, 0.4);
+        }
+        
+        .status-dot.pending {
+            background: var(--color-warning);
+            box-shadow: 0 0 8px rgba(255, 159, 10, 0.4);
+        }
+        
+        .status-dot.inactive {
+            background: var(--color-gray-500);
+        }
+        
+        /* Interactive Elements */
+        .interactive-element {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .interactive-element:hover {
+            transform: scale(1.02);
+        }
+        
+        .interactive-element:active {
+            transform: scale(0.98);
+        }
+        
+        /* Metric Cards */
+        .metric-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            text-align: center;
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .metric-value {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-white);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .metric-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .form-label {
+            display: block;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .form-input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+            font-family: var(--font-family-sans);
+            transition: all 0.2s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        /* Loading States */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-gray-600);
+            border-top: 2px solid var(--accent-cyan);
+            border-radius: var(--radius-full);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Tooltip System */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-xs);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            z-index: 1000;
+        }
+        
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><img src="./brands/twin3-black-half.png" alt="Twin3"></div>
+            <span class="sidebar-title">twin3 IA Tracker</span>
+            <button class="btn btn-ghost btn-sm sidebar-toggle" onclick="toggleSidebar()"><i data-lucide="panel-left-close"
+                    id="toggle-icon"></i></button>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-category" data-i18n="nav.overview">總覽</div>
+            <div class="nav-item active" onclick="showSection('overview')"><i data-lucide="bar-chart-2"
+                    class="nav-icon"></i><span class="nav-label" data-i18n="nav.overview">統計總覽</span></div>
+            <div class="nav-item" onclick="showSection('ia-diagram')"><i data-lucide="network"
+                    class="nav-icon"></i><span class="nav-label" data-i18n="nav.ia_diagram">IA 架構圖</span></div>
+
+            <div class="nav-category" data-i18n="nav.site_components">網站元件</div>
+            <div class="nav-item" onclick="showSection('homepage')"><i data-lucide="home" class="nav-icon"></i><span
+                    class="nav-label" data-i18n="nav.homepage">首頁元件</span></div>
+            <div class="nav-item" onclick="showSection('mytwin')"><i data-lucide="user" class="nav-icon"></i><span
+                    class="nav-label" data-i18n="nav.mytwin">My Twin</span></div>
+            <div class="nav-item" onclick="showSection('tasks')"><i data-lucide="check-square"
+                    class="nav-icon"></i><span class="nav-label" data-i18n="nav.tasks">Tasks 任務</span></div>
+            <div class="nav-item" onclick="showSection('navigation')"><i data-lucide="compass"
+                    class="nav-icon"></i><span class="nav-label" data-i18n="nav.navigation">導覽元件</span></div>
+            <div class="nav-item" onclick="showSection('external')"><i data-lucide="external-link"
+                    class="nav-icon"></i><span class="nav-label" data-i18n="nav.external">外部連結</span></div>
+
+            <div class="nav-category" data-i18n="nav.dev_tracking">開發追蹤</div>
+            <div class="nav-item" onclick="showSection('classification')"><i data-lucide="layout-grid"
+                    class="nav-icon"></i><span class="nav-label" data-i18n="nav.classification">IA 架構盤點</span></div>
+            <div class="nav-item" onclick="showSection('triggers')"><i data-lucide="zap" class="nav-icon"></i><span
+                    class="nav-label" data-i18n="nav.triggers">Triggers 定義</span></div>
+            <div class="nav-item" onclick="showSection('onboarding')"><i data-lucide="rocket" class="nav-icon"></i><span
+                    class="nav-label" data-i18n="nav.onboarding">Onboarding</span></div>
+            <div class="nav-item" onclick="showSection('personas')"><i data-lucide="users" class="nav-icon"></i><span
+                    class="nav-label" data-i18n="nav.personas">Personas</span></div>
+            <div class="nav-item" onclick="showSection('web2accounts')"><i data-lucide="link" class="nav-icon"></i><span
+                    class="nav-label" data-i18n="nav.web2">Web2 帳號</span></div>
+        </nav>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+    <main class="main">
+        <header class="main-header">
+            <button class="btn btn-ghost btn-sm mobile-menu-btn" onclick="toggleMobileSidebar()">
+                <i data-lucide="menu"></i>
+            </button>
+            <div class="header-content">
+                <div class="breadcrumb">Twin3 / IA Tracker / <span id="breadcrumb-current"
+                        data-i18n="nav.classification">IA 架構盤點</span></div>
+                <h1 class="page-title" id="page-title" data-i18n="nav.classification">IA 架構盤點</h1>
+            </div>
+            <div style="flex:1"></div> <!-- Spacer -->
+            <!-- Theme Provider Status (for debugging) -->
+            <div id="theme-status" style="display: none; margin-right: 12px; font-size: 11px; color: var(--text-secondary);">
+                <span id="theme-status-text">Theme: Loading...</span>
+            </div>
+        </header>
+        <div class="content" id="content"></div>
+    </main>
+
+    <script>
+        // ===================== DESIGN TOKEN MANAGER =====================
+        /**
+         * Design Token Manager for Twin3 IA Tracker
+         * Provides centralized access to design system tokens
+         */
+        class DesignTokenManager {
+            constructor() {
+                this.tokens = this.loadTokensFromCSS();
+                this.validateTokens();
+            }
+            
+            /**
+             * Load design tokens from CSS custom properties
+             */
+            loadTokensFromCSS() {
+                const computedStyle = getComputedStyle(document.documentElement);
+                
+                return {
+                    colors: {
+                        primary: this.extractColorPalette(computedStyle, 'primary'),
+                        secondary: this.extractColorPalette(computedStyle, 'secondary'),
+                        semantic: {
+                            success: computedStyle.getPropertyValue('--color-success').trim(),
+                            warning: computedStyle.getPropertyValue('--color-warning').trim(),
+                            error: computedStyle.getPropertyValue('--color-error').trim(),
+                            info: computedStyle.getPropertyValue('--color-info').trim()
+                        },
+                        neutral: {
+                            black: computedStyle.getPropertyValue('--color-black').trim(),
+                            white: computedStyle.getPropertyValue('--color-white').trim(),
+                            gray: this.extractColorPalette(computedStyle, 'gray')
+                        }
+                    },
+                    spacing: this.extractSpacing(computedStyle),
+                    typography: this.extractTypography(computedStyle),
+                    shadows: this.extractShadows(computedStyle),
+                    borderRadius: this.extractBorderRadius(computedStyle),
+                    glassmorphism: {
+                        background: computedStyle.getPropertyValue('--glass-bg').trim(),
+                        border: computedStyle.getPropertyValue('--glass-border').trim(),
+                        blur: computedStyle.getPropertyValue('--glass-blur').trim()
+                    }
+                };
+            }
+            
+            extractColorPalette(computedStyle, name) {
+                const palette = {};
+                const shades = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
+                
+                shades.forEach(shade => {
+                    const value = computedStyle.getPropertyValue(`--color-${name}-${shade}`).trim();
+                    if (value) {
+                        palette[shade] = value;
+                    }
+                });
+                
+                return palette;
+            }
+            
+            extractSpacing(computedStyle) {
+                const spacing = {};
+                const sizes = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'];
+                
+                sizes.forEach(size => {
+                    const value = computedStyle.getPropertyValue(`--space-${size}`).trim();
+                    if (value) {
+                        spacing[size] = value;
+                    }
+                });
+                
+                return spacing;
+            }
+            
+            extractTypography(computedStyle) {
+                return {
+                    fontFamily: {
+                        sans: computedStyle.getPropertyValue('--font-family-sans').trim()
+                    },
+                    fontSize: {
+                        xs: computedStyle.getPropertyValue('--font-size-xs').trim(),
+                        sm: computedStyle.getPropertyValue('--font-size-sm').trim(),
+                        base: computedStyle.getPropertyValue('--font-size-base').trim(),
+                        lg: computedStyle.getPropertyValue('--font-size-lg').trim(),
+                        xl: computedStyle.getPropertyValue('--font-size-xl').trim(),
+                        '2xl': computedStyle.getPropertyValue('--font-size-2xl').trim(),
+                        '3xl': computedStyle.getPropertyValue('--font-size-3xl').trim(),
+                        '4xl': computedStyle.getPropertyValue('--font-size-4xl').trim()
+                    },
+                    fontWeight: {
+                        normal: computedStyle.getPropertyValue('--font-weight-normal').trim(),
+                        medium: computedStyle.getPropertyValue('--font-weight-medium').trim(),
+                        semibold: computedStyle.getPropertyValue('--font-weight-semibold').trim()
+                    }
+                };
+            }
+            
+            extractShadows(computedStyle) {
+                return {
+                    sm: computedStyle.getPropertyValue('--shadow-sm').trim(),
+                    md: computedStyle.getPropertyValue('--shadow-md').trim(),
+                    lg: computedStyle.getPropertyValue('--shadow-lg').trim(),
+                    xl: computedStyle.getPropertyValue('--shadow-xl').trim()
+                };
+            }
+            
+            extractBorderRadius(computedStyle) {
+                return {
+                    sm: computedStyle.getPropertyValue('--radius-sm').trim(),
+                    md: computedStyle.getPropertyValue('--radius-md').trim(),
+                    lg: computedStyle.getPropertyValue('--radius-lg').trim(),
+                    xl: computedStyle.getPropertyValue('--radius-xl').trim(),
+                    full: computedStyle.getPropertyValue('--radius-full').trim()
+                };
+            }
+            
+            /**
+             * Get a token value by dot notation path
+             * @param {string} path - Dot notation path (e.g., 'colors.primary.500')
+             */
+            getToken(path) {
+                const keys = path.split('.');
+                let current = this.tokens;
+                
+                for (const key of keys) {
+                    if (current && typeof current === 'object' && key in current) {
+                        current = current[key];
+                    } else {
+                        console.warn(`Design token not found: ${path}`);
+                        return undefined;
+                    }
+                }
+                
+                return current;
+            }
+            
+            /**
+             * Validate that all required tokens are present
+             */
+            validateTokens() {
+                const requiredPaths = [
+                    'colors.primary.500',
+                    'colors.semantic.success',
+                    'spacing.md',
+                    'typography.fontSize.base',
+                    'shadows.md',
+                    'borderRadius.md'
+                ];
+                
+                const missingTokens = [];
+                
+                requiredPaths.forEach(path => {
+                    const value = this.getToken(path);
+                    if (!value) {
+                        missingTokens.push(path);
+                    }
+                });
+                
+                if (missingTokens.length > 0) {
+                    console.error('Missing required design tokens:', missingTokens);
+                    return false;
+                }
+                
+                console.log('✅ All required design tokens are present');
+                return true;
+            }
+            
+            /**
+             * Get a complete color palette
+             */
+            getColorPalette(name) {
+                return this.getToken(`colors.${name}`);
+            }
+            
+            /**
+             * Get spacing value
+             */
+            getSpacing(size) {
+                return this.getToken(`spacing.${size}`);
+            }
+            
+            /**
+             * Get font size value
+             */
+            getFontSize(size) {
+                return this.getToken(`typography.fontSize.${size}`);
+            }
+            
+            /**
+             * Get shadow value
+             */
+            getShadow(size) {
+                return this.getToken(`shadows.${size}`);
+            }
+            
+            /**
+             * Get border radius value
+             */
+            getBorderRadius(size) {
+                return this.getToken(`borderRadius.${size}`);
+            }
+            
+            /**
+             * Update a CSS custom property
+             */
+            updateCSSVariable(name, value) {
+                document.documentElement.style.setProperty(name, value);
+                // Reload tokens after update
+                this.tokens = this.loadTokensFromCSS();
+            }
+            
+            /**
+             * Get all tokens (for debugging)
+             */
+            getAllTokens() {
+                return this.tokens;
+            }
+        }
+        
+        // Initialize global design token manager
+        const designTokenManager = new DesignTokenManager();
+        
+        // Make it available globally for debugging
+        window.designTokenManager = designTokenManager;
+
+        // ===================== DATA =====================
+        // I18N Dictionary
+        const I18N = {
+            'zh-TW': {
+                'nav.overview': '總覽',
+                'nav.ia_diagram': 'IA 架構圖',
+                'nav.homepage': '首頁元件',
+                'nav.mytwin': 'My Twin',
+                'nav.tasks': 'Tasks 任務',
+                'nav.navigation': '導覽元件',
+                'nav.external': '外部連結',
+                'nav.classification': 'IA 架構盤點',
+                'nav.triggers': 'Triggers 定義',
+                'nav.onboarding': 'Onboarding',
+                'nav.personas': 'Personas',
+                'nav.web2': 'Web2 帳號',
+                'nav.site_components': '網站元件',
+                'nav.dev_tracking': '開發追蹤',
+
+                'overview.pages': '主要頁面',
+                'overview.header': 'Header 項目',
+                'overview.footer': 'Footer 連結',
+                'overview.tasks': '任務數量',
+                'overview.socials': '社群平台',
+                'overview.matrix': 'Matrix 維度',
+                'overview.progress': '開發進度摘要',
+                'overview.category': '類別',
+                'overview.count': '總數',
+                'overview.done': '已完成',
+                'overview.todo': '待開發',
+                'overview.view': '查看',
+                'overview.widgets': 'Widget Cards',
+                'overview.home_comp': '首頁元件',
+                'overview.mytwin_comp': 'My Twin 元件',
+                'overview.tasks_page': 'Tasks 頁面',
+
+                'diagram.title': '網站 IA 完整架構圖',
+                'diagram.user_flow': '使用者流程圖',
+                'diagram.app_map': 'twin3_main App 對應圖',
+
+                'homepage.title': '首頁功能元件表',
+                'homepage.section': '區塊',
+                'homepage.component': '元件名稱',
+                'homepage.content': '內容說明',
+                'homepage.cta': 'CTA',
+                'homepage.target': '導向',
+
+                'mytwin.stats': '頂部統計區',
+                'mytwin.matrix': 'Twin Matrix 矩陣',
+                'mytwin.shapes': '幾何體展示區',
+                'mytwin.update': 'Matrix Update 面板',
+                'mytwin.metric': '指標',
+                'mytwin.interactive': '互動性',
+                'mytwin.element': '元素',
+                'mytwin.shape': '形狀',
+                'mytwin.color': '線框顏色',
+                'mytwin.step': '步驟',
+
+                'tasks.title': 'Tasks 任務頁面',
+                'tasks.path': '路徑',
+                'tasks.level': '層級/步驟',
+                'tasks.reward': '獎勵',
+
+                'navigation.header': 'Header 導覽列',
+                'navigation.footer': 'Footer 連結',
+                'navigation.item': '項目',
+                'navigation.target': '目標',
+                'navigation.link': '連結',
+                'navigation.login': '需登入？',
+                'navigation.new_tab': '開新分頁？',
+
+                'external.title': '所有外部連結彙整',
+                'external.url': 'URL',
+                'external.location': '出現位置',
+
+                'onboarding.title': 'Onboarding 流程設計',
+                'onboarding.trigger_list': 'Onboarding 觸發節點',
+                'onboarding.stages': '漸進揭露階段說明',
+                'onboarding.node': '節點',
+                'onboarding.timing': '顯示時機',
+                'onboarding.stage': '階段',
+                'onboarding.sidebar_state': '側邊欄狀態',
+                'onboarding.chat_content': '對話區內容',
+                'onboarding.trigger_cond': '觸發條件',
+
+                'personas.title': 'FAQ Personas — 典型問題來源',
+                'personas.desc': '根據不同用戶類型整理的典型問題，用於 AI FAQ 訓練',
+
+                'status.interactive': '互動',
+                'status.external': '外部',
+                'status.community': '社群',
+                'status.internal': '內部',
+                'status.coming_soon': 'Soon',
+
+                'stats.pages': '總頁面',
+                'stats.tasks': '任務流程',
+                'stats.matrix': '矩陣維度',
+                'stats.active_widgets': 'Active Widgets',
+                'stats.draft_widgets': '待開發',
+                'stats.bubbles': 'Hint Bubble',
+                'stats.total': '總計',
+                'table.dev': 'Dev',
+                'table.type': '類型',
+                'table.name': '名稱',
+                'table.widget': 'Widget',
+                'table.trigger_id': 'Trigger ID',
+                'table.trigger_source': '觸發詞 / 來源',
+                'table.interaction': '互動元素',
+                'table.status': '狀態',
+                'table.id': 'ID',
+                'table.triggers': 'Triggers (關鍵詞)',
+                'table.response_type': 'Response Type',
+                'table.widget_card': 'Widget / Card',
+                'table.suggested_actions': 'Suggested Actions',
+                'table.source': '來源',
+                'table.platform': '平台',
+                'table.priority': '優先級',
+                'table.desc': '說明',
+                'table.auth_method': '驗證方式',
+                'status.hint_bubble': 'Hint Bubble',
+                'title.widget_list': 'Widget & Bubble 開發清單',
+                'title.trigger_map': 'Trigger & Widget 完整對應表',
+                'title.web2_accounts': 'KOL Web2 帳號連結',
+                'desc.web2': '支援 KOL 串聯的社群平台，用於驗證身份與接案',
+                'status.active': 'active',
+                'status.pending': 'pending',
+                'status.todo': 'to do',
+                'status.draft': 'draft',
+                'status.legacy': 'legacy',
+                'status.deprecated': 'deprecated'
+            },
+            'en': {
+                'nav.overview': 'Overview',
+                'nav.ia_diagram': 'IA Diagram',
+                'nav.homepage': 'Homepage Components',
+                'nav.mytwin': 'My Twin',
+                'nav.tasks': 'Tasks',
+                'nav.navigation': 'Navigation',
+                'nav.external': 'External Links',
+                'nav.classification': 'IA Classification',
+                'nav.triggers': 'Triggers Definition',
+                'nav.onboarding': 'Onboarding',
+                'nav.personas': 'Personas',
+                'nav.web2': 'Web2 Accounts',
+                'nav.site_components': 'Site Components',
+                'nav.dev_tracking': 'Dev Tracking',
+
+                'overview.pages': 'Main Pages',
+                'overview.header': 'Header Items',
+                'overview.footer': 'Footer Links',
+                'overview.tasks': 'Task Count',
+                'overview.socials': 'Social Platforms',
+                'overview.matrix': 'Matrix Dims',
+                'overview.progress': 'Progress Summary',
+                'overview.category': 'Category',
+                'overview.count': 'Count',
+                'overview.done': 'Done',
+                'overview.todo': 'To Do',
+                'overview.view': 'View',
+                'overview.widgets': 'Widget Cards',
+                'overview.home_comp': 'Home Components',
+                'overview.mytwin_comp': 'My Twin Components',
+                'overview.tasks_page': 'Tasks Page',
+
+                'diagram.title': 'Site IA Architecture',
+                'diagram.user_flow': 'User Flow',
+                'diagram.app_map': 'twin3_main App Map',
+
+                'homepage.title': 'Homepage Component List',
+                'homepage.section': 'Section',
+                'homepage.component': 'Component',
+                'homepage.content': 'Content',
+                'homepage.cta': 'CTA',
+                'homepage.target': 'Target',
+
+                'mytwin.stats': 'Top Stats',
+                'mytwin.matrix': 'Twin Matrix',
+                'mytwin.shapes': 'Geometry Shapes',
+                'mytwin.update': 'Matrix Update Panel',
+                'mytwin.metric': 'Metric',
+                'mytwin.interactive': 'Interactive',
+                'mytwin.element': 'Element',
+                'mytwin.shape': 'Shape',
+                'mytwin.color': 'Wireframe Color',
+                'mytwin.step': 'Step',
+
+                'tasks.title': 'Tasks Page',
+                'tasks.path': 'Path',
+                'tasks.level': 'Level/Step',
+                'tasks.reward': 'Reward',
+
+                'navigation.header': 'Header Nav',
+                'navigation.footer': 'Footer Links',
+                'navigation.item': 'Item',
+                'navigation.target': 'Target',
+                'navigation.link': 'Link',
+                'navigation.login': 'Login Req?',
+                'navigation.new_tab': 'New Tab?',
+
+                'external.title': 'All External Links',
+                'external.url': 'URL',
+                'external.location': 'Location',
+
+                'onboarding.title': 'Onboarding Flow',
+                'onboarding.trigger_list': 'Trigger Nodes',
+                'onboarding.stages': 'Progressive Disclosure Stages',
+                'onboarding.node': 'Node',
+                'onboarding.timing': 'Timing',
+                'onboarding.stage': 'Stage',
+                'onboarding.sidebar_state': 'Sidebar State',
+                'onboarding.chat_content': 'Chat Content',
+                'onboarding.trigger_cond': 'Condition',
+
+                'personas.title': 'FAQ Personas',
+                'personas.desc': 'Typical questions for AI FAQ training.',
+
+                'status.interactive': 'Interactive',
+                'status.external': 'External',
+                'status.community': 'Community',
+                'status.internal': 'Internal',
+                'status.coming_soon': 'Soon',
+
+                'stats.pages': 'Total Pages',
+                'stats.tasks': 'User Flows',
+                'stats.matrix': 'Matrix Dims',
+                'stats.active_widgets': 'Active Widgets',
+                'stats.draft_widgets': 'Pending Dev',
+                'stats.bubbles': 'Hint Bubble',
+                'stats.total': 'Total',
+                'table.dev': 'Dev',
+                'table.type': 'Type',
+                'table.name': 'Name',
+                'table.widget': 'Widget',
+                'table.trigger_id': 'Trigger ID',
+                'table.trigger_source': 'Trigger Source',
+                'table.interaction': 'Interaction',
+                'table.status': 'Status',
+                'table.id': 'ID',
+                'table.triggers': 'Triggers',
+                'table.response_type': 'Response Type',
+                'table.widget_card': 'Widget / Card',
+                'table.suggested_actions': 'Suggested Actions',
+                'table.source': 'Source',
+                'table.platform': 'Platform',
+                'table.priority': 'Priority',
+                'table.desc': 'Description',
+                'table.auth_method': 'Auth Method',
+                'status.hint_bubble': 'Hint Bubble',
+                'title.widget_list': 'Widget & Bubble List',
+                'title.trigger_map': 'Trigger & Widget Map',
+                'title.web2_accounts': 'Web2 Account Linking',
+                'desc.web2': 'Supported platforms for KOL identity verification.',
+                'status.active': 'active',
+                'status.pending': 'pending',
+                'status.todo': 'to do',
+                'status.draft': 'draft',
+                'status.legacy': 'legacy',
+                'status.deprecated': 'deprecated'
+            }
+        };
+
+        // ===================== INTERNATIONALIZATION SYSTEM =====================
+        /**
+         * Enhanced I18n System for Twin3 IA Tracker
+         * Features: Dynamic translation loading, language detection, persistence
+         */
+        class I18nManager {
+            constructor() {
+                this.translations = {};
+                this.fallbackLang = 'en';
+                this.storageKey = 'twin3_lang';
+                this.supportedLanguages = ['zh-TW', 'en'];
+                this.currentLang = this.detectLanguage();
+                
+                // Load embedded translations immediately as fallback
+                this.loadEmbeddedTranslations();
+                
+                // Then try to load external translations asynchronously
+                this.init();
+            }
+            
+            /**
+             * Feature: design-system-unification, Property 5: 語言自動檢測
+             */
+            detectLanguage() {
+                // Check localStorage first
+                const savedLang = localStorage.getItem(this.storageKey);
+                if (savedLang && this.supportedLanguages.includes(savedLang)) {
+                    return savedLang;
+                }
+                
+                // Detect from browser
+                const browserLang = navigator.language || navigator.userLanguage;
+                
+                // Direct match
+                if (this.supportedLanguages.includes(browserLang)) {
+                    return browserLang;
+                }
+                
+                // Partial match (e.g., 'zh' matches 'zh-TW')
+                const langCode = browserLang.split('-')[0];
+                const match = this.supportedLanguages.find(lang => lang.startsWith(langCode));
+                if (match) {
+                    return match;
+                }
+                
+                return this.fallbackLang;
+            }
+            
+            async init() {
+                try {
+                    await this.loadTranslations();
+                    this.updatePageLanguage();
+                    console.log(`✅ I18n initialized with language: ${this.currentLang}`);
+                } catch (error) {
+                    console.error('❌ Failed to initialize I18n:', error);
+                    this.loadEmbeddedTranslations();
+                }
+            }
+            
+            async loadTranslations() {
+                // Try to load external JSON files first
+                for (const lang of this.supportedLanguages) {
+                    try {
+                        const response = await fetch(`./i18n/${lang}.json`);
+                        if (response.ok) {
+                            this.translations[lang] = await response.json();
+                        } else {
+                            throw new Error(`Failed to load ${lang}.json`);
+                        }
+                    } catch (error) {
+                        console.warn(`Loading embedded translations for ${lang}`);
+                        this.translations[lang] = this.getEmbeddedTranslation(lang);
+                    }
+                }
+            }
+            
+            getEmbeddedTranslation(lang) {
+                // Use the existing I18N object as fallback
+                return I18N[lang] || {};
+            }
+            
+            loadEmbeddedTranslations() {
+                this.supportedLanguages.forEach(lang => {
+                    this.translations[lang] = this.getEmbeddedTranslation(lang);
+                });
+            }
+            
+            t(key) {
+                const translation = this.getNestedValue(this.translations[this.currentLang], key) ||
+                                 this.getNestedValue(this.translations[this.fallbackLang], key) ||
+                                 key;
+                return translation;
+            }
+            
+            getNestedValue(obj, path) {
+                return path.split('.').reduce((current, key) => {
+                    return current && current[key] !== undefined ? current[key] : null;
+                }, obj);
+            }
+            
+            /**
+             * Feature: design-system-unification, Property 6: 語言切換完整性
+             */
+            async setLanguage(lang, skipRender = false) {
+                if (!this.supportedLanguages.includes(lang)) {
+                    console.warn(`Unsupported language: ${lang}`);
+                    return false;
+                }
+                
+                this.currentLang = lang;
+                
+                // Save to localStorage (Property 7: 語言偏好持久化)
+                try {
+                    localStorage.setItem(this.storageKey, lang);
+                } catch (error) {
+                    console.warn('Failed to save language preference:', error);
+                }
+                
+                this.updatePageLanguage();
+                
+                // Re-render current section if showSection is available and not skipped
+                if (!skipRender && typeof showSection === 'function' && document.readyState === 'complete') {
+                    // Get current section from theme provider or use default
+                    let section = 'classification'; // default
+                    try {
+                        if (typeof themeProvider !== 'undefined' && themeProvider.context) {
+                            section = themeProvider.context.state.currentSection;
+                        }
+                    } catch (e) {
+                        // Ignore errors during initialization
+                    }
+                    showSection(section);
+                }
+                
+                return true;
+            }
+            
+            toggleLanguage() {
+                const nextLang = this.currentLang === 'zh-TW' ? 'en' : 'zh-TW';
+                return this.setLanguage(nextLang);
+            }
+            
+            /**
+             * Get current language
+             */
+            getCurrentLanguage() {
+                return this.currentLang;
+            }
+            
+            /**
+             * Get supported languages
+             */
+            getSupportedLanguages() {
+                return [...this.supportedLanguages];
+            }
+            
+            updatePageLanguage() {
+                // Update static elements with data-i18n attributes
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (key) {
+                        el.textContent = this.t(key);
+                    }
+                });
+                
+                // Update page title
+                const pageTitle = document.getElementById('page-title');
+                if (pageTitle) {
+                    const key = pageTitle.getAttribute('data-i18n');
+                    if (key) {
+                        pageTitle.textContent = this.t(key);
+                    }
+                }
+                
+                // Update language toggle button
+                const langText = document.getElementById('current-lang-text');
+                if (langText) {
+                    langText.textContent = this.currentLang === 'zh-TW' ? 'ZH' : 'EN';
+                }
+                
+                // Update document language attribute
+                document.documentElement.lang = this.currentLang;
+            }
+        }
+        
+        // Initialize I18n Manager
+        const i18nManager = new I18nManager();
+        
+        // Legacy compatibility functions
+        let currentLang = i18nManager.currentLang;
+        function t(key) {
+            return i18nManager.t(key);
+        }
+        
+        function toggleLanguage() {
+            i18nManager.toggleLanguage();
+            currentLang = i18nManager.currentLang; // Update legacy variable
+        }
+        
+        function updatePageLanguage() {
+            i18nManager.updatePageLanguage();
+        }
+        
+        // Make available globally
+        window.i18nManager = i18nManager;
+        
+        // ===================== ICON SYSTEM MANAGER =====================
+        /**
+         * Icon System Manager for Twin3 IA Tracker
+         * Ensures consistent use of Lucide icons with standardized sizes
+         */
+        class IconSystemManager {
+            constructor() {
+                this.iconLibrary = 'lucide-react';
+                this.standardSizes = {
+                    xs: '14px',
+                    sm: '16px',
+                    md: '18px',
+                    lg: '20px',
+                    xl: '24px'
+                };
+                
+                // Semantic icon mapping for consistency
+                this.semanticMapping = {
+                    // Navigation
+                    menu: 'menu',
+                    home: 'home',
+                    navigation: 'compass',
+                    external: 'external-link',
+                    
+                    // User & People
+                    user: 'user',
+                    users: 'users',
+                    
+                    // Actions
+                    tasks: 'check-square',
+                    settings: 'settings',
+                    close: 'x',
+                    edit: 'edit',
+                    delete: 'trash-2',
+                    save: 'save',
+                    
+                    // UI Controls
+                    toggle_close: 'panel-left-close',
+                    toggle_open: 'panel-left-open',
+                    sort: 'arrow-up-down',
+                    check: 'check',
+                    
+                    // Data & Analytics
+                    chart: 'bar-chart-2',
+                    network: 'network',
+                    diagram: 'git-branch',
+                    layers: 'layers',
+                    grid: 'grid-3x3',
+                    
+                    // Content
+                    diamond: 'diamond',
+                    refresh: 'refresh-cw',
+                    
+                    // Social & Communication
+                    link: 'link',
+                    share: 'share-2',
+                    
+                    // Status & Feedback
+                    success: 'check-circle',
+                    warning: 'alert-triangle',
+                    error: 'x-circle',
+                    info: 'info',
+                    
+                    // Misc
+                    rocket: 'rocket',
+                    zap: 'zap',
+                    help: 'help-circle'
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.standardizeExistingIcons();
+                this.validateIconUsage();
+                console.log('✅ Icon system initialized');
+            }
+            
+            /**
+             * Feature: design-system-unification, Property 11: 圖標尺寸標準化
+             * Standardize all existing icon sizes
+             */
+            standardizeExistingIcons() {
+                const icons = document.querySelectorAll('[data-lucide]');
+                
+                icons.forEach(icon => {
+                    // Get current size from style attribute
+                    const style = icon.getAttribute('style') || '';
+                    const widthMatch = style.match(/width:\s*(\d+)px/);
+                    const heightMatch = style.match(/height:\s*(\d+)px/);
+                    
+                    if (widthMatch && heightMatch) {
+                        const currentWidth = parseInt(widthMatch[1]);
+                        const standardSize = this.getClosestStandardSize(currentWidth);
+                        
+                        // Update to standard size
+                        const newStyle = style
+                            .replace(/width:\s*\d+px/, `width: ${standardSize}`)
+                            .replace(/height:\s*\d+px/, `height: ${standardSize}`);
+                        
+                        icon.setAttribute('style', newStyle);
+                    }
+                });
+            }
+            
+            getClosestStandardSize(currentSize) {
+                const sizes = Object.values(this.standardSizes).map(s => parseInt(s));
+                const closest = sizes.reduce((prev, curr) => 
+                    Math.abs(curr - currentSize) < Math.abs(prev - currentSize) ? curr : prev
+                );
+                return `${closest}px`;
+            }
+            
+            /**
+             * Create a standardized icon element
+             */
+            createIcon(semanticName, size = 'md', additionalClasses = '') {
+                const iconName = this.semanticMapping[semanticName] || semanticName;
+                const iconSize = this.standardSizes[size] || size;
+                
+                const icon = document.createElement('i');
+                icon.setAttribute('data-lucide', iconName);
+                icon.style.width = iconSize;
+                icon.style.height = iconSize;
+                
+                if (additionalClasses) {
+                    icon.className = additionalClasses;
+                }
+                
+                return icon;
+            }
+            
+            /**
+             * Update an existing icon to use semantic mapping
+             */
+            updateIcon(element, semanticName, size = null) {
+                const iconName = this.semanticMapping[semanticName] || semanticName;
+                element.setAttribute('data-lucide', iconName);
+                
+                if (size) {
+                    const iconSize = this.standardSizes[size] || size;
+                    element.style.width = iconSize;
+                    element.style.height = iconSize;
+                }
+                
+                // Trigger Lucide to re-render the icon
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }
+            
+            /**
+             * Validate current icon usage
+             */
+            validateIconUsage() {
+                const icons = document.querySelectorAll('[data-lucide]');
+                const issues = [];
+                
+                icons.forEach((icon, index) => {
+                    const iconName = icon.getAttribute('data-lucide');
+                    const style = icon.getAttribute('style') || '';
+                    
+                    // Check if icon exists in Lucide
+                    if (!this.isValidLucideIcon(iconName)) {
+                        issues.push(`Invalid Lucide icon: ${iconName} (element ${index})`);
+                    }
+                    
+                    // Check size standardization
+                    const widthMatch = style.match(/width:\s*(\d+)px/);
+                    if (widthMatch) {
+                        const width = widthMatch[1] + 'px';
+                        if (!Object.values(this.standardSizes).includes(width)) {
+                            issues.push(`Non-standard icon size: ${width} for ${iconName} (element ${index})`);
+                        }
+                    }
+                });
+                
+                if (issues.length > 0) {
+                    console.warn('Icon system validation issues:', issues);
+                } else {
+                    console.log('✅ All icons pass validation');
+                }
+                
+                return issues.length === 0;
+            }
+            
+            isValidLucideIcon(iconName) {
+                // Basic validation - in a real implementation, this would check against the Lucide icon list
+                const commonLucideIcons = [
+                    'menu', 'home', 'user', 'users', 'check-square', 'external-link',
+                    'settings', 'x', 'panel-left-close', 'panel-left-open', 'bar-chart-2',
+                    'network', 'compass', 'layout-grid', 'zap', 'rocket', 'link',
+                    'arrow-up-down', 'check', 'git-branch', 'layers', 'grid-3x3',
+                    'diamond', 'refresh-cw', 'share-2', 'help-circle', 'edit', 'trash-2',
+                    'save', 'check-circle', 'alert-triangle', 'x-circle', 'info'
+                ];
+                
+                return commonLucideIcons.includes(iconName);
+            }
+            
+            /**
+             * Get semantic icon name for a given purpose
+             */
+            getSemanticIcon(purpose) {
+                return this.semanticMapping[purpose] || purpose;
+            }
+            
+            /**
+             * Get all available standard sizes
+             */
+            getStandardSizes() {
+                return { ...this.standardSizes };
+            }
+        }
+        
+        // Initialize Icon System Manager
+        const iconSystemManager = new IconSystemManager();
+        
+        // Make available globally
+        window.iconSystemManager = iconSystemManager;
+        
+        // ===================== TERMINOLOGY MANAGER =====================
+        /**
+         * Terminology Manager for Twin3 IA Tracker
+         * Ensures consistent use of standardized terminology across the application
+         */
+        class TerminologyManager {
+            constructor() {
+                this.standardTerminology = {
+                    buttons: {
+                        'zh-TW': {
+                            view: '查看',
+                            viewDetails: '查看詳情',
+                            edit: '編輯',
+                            delete: '刪除',
+                            save: '保存',
+                            cancel: '取消',
+                            confirm: '確認',
+                            submit: '提交',
+                            back: '返回',
+                            close: '關閉',
+                            start: '開始',
+                            complete: '完成',
+                            accept: '接受',
+                            reject: '拒絕'
+                        },
+                        'en': {
+                            view: 'View',
+                            viewDetails: 'View Details',
+                            edit: 'Edit',
+                            delete: 'Delete',
+                            save: 'Save',
+                            cancel: 'Cancel',
+                            confirm: 'Confirm',
+                            submit: 'Submit',
+                            back: 'Back',
+                            close: 'Close',
+                            start: 'Start',
+                            complete: 'Complete',
+                            accept: 'Accept',
+                            reject: 'Reject'
+                        }
+                    },
+                    status: {
+                        'zh-TW': {
+                            active: '待開發',
+                            completed: '已完成',
+                            pending: '待開發',
+                            verified: '已驗證',
+                            open: '開放中',
+                            closed: '已關閉',
+                            draft: '草稿',
+                            published: '已發布',
+                            todo: '待開發',
+                            done: '已完成'
+                        },
+                        'en': {
+                            active: 'Active',
+                            completed: 'Completed',
+                            pending: 'Pending',
+                            verified: 'Verified',
+                            open: 'Open',
+                            closed: 'Closed',
+                            draft: 'Draft',
+                            published: 'Published',
+                            todo: 'To Do',
+                            done: 'Done'
+                        }
+                    },
+                    tokens: {
+                        format: '$twin3',
+                        displayName: {
+                            'zh-TW': 'Twin3 代幣',
+                            'en': 'Twin3 Token'
+                        }
+                    }
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.validateTerminology();
+                console.log('✅ Terminology manager initialized');
+            }
+            
+            /**
+             * Get standardized button text
+             */
+            getButtonText(key, language = 'zh-TW') {
+                return this.standardTerminology.buttons[language]?.[key] || key;
+            }
+            
+            /**
+             * Get standardized status text
+             */
+            getStatusText(key, language = 'zh-TW') {
+                return this.standardTerminology.status[language]?.[key] || key;
+            }
+            
+            /**
+             * Format token amount
+             */
+            formatToken(amount) {
+                if (typeof amount === 'number') {
+                    return `${this.standardTerminology.tokens.format} ${amount}`;
+                }
+                return this.standardTerminology.tokens.format;
+            }
+            
+            /**
+             * Get token display name
+             */
+            getTokenDisplayName(language = 'zh-TW') {
+                return this.standardTerminology.tokens.displayName[language];
+            }
+            
+            /**
+             * Validate current terminology usage
+             */
+            validateTerminology() {
+                const issues = [];
+                
+                // Check if all required button texts are defined
+                const requiredButtons = ['view', 'edit', 'delete', 'save', 'cancel'];
+                const languages = ['zh-TW', 'en'];
+                
+                languages.forEach(lang => {
+                    requiredButtons.forEach(button => {
+                        if (!this.standardTerminology.buttons[lang]?.[button]) {
+                            issues.push(`Missing button text: ${button} in ${lang}`);
+                        }
+                    });
+                });
+                
+                if (issues.length > 0) {
+                    console.warn('Terminology validation issues:', issues);
+                    return false;
+                }
+                
+                console.log('✅ All terminology is properly defined');
+                return true;
+            }
+            
+            /**
+             * Get all standard button texts for a language
+             */
+            getAllButtonTexts(language = 'zh-TW') {
+                return { ...this.standardTerminology.buttons[language] };
+            }
+            
+            /**
+             * Get all standard status texts for a language
+             */
+            getAllStatusTexts(language = 'zh-TW') {
+                return { ...this.standardTerminology.status[language] };
+            }
+            
+            /**
+             * Check if a text follows standard terminology
+             */
+            isStandardButtonText(text, language = 'zh-TW') {
+                const standardTexts = Object.values(this.standardTerminology.buttons[language] || {});
+                return standardTexts.includes(text);
+            }
+            
+            /**
+             * Check if a status follows standard terminology
+             */
+            isStandardStatusText(text, language = 'zh-TW') {
+                const standardTexts = Object.values(this.standardTerminology.status[language] || {});
+                return standardTexts.includes(text);
+            }
+        }
+        
+        // Initialize Terminology Manager
+        const terminologyManager = new TerminologyManager();
+        
+        // Make available globally
+        window.terminologyManager = terminologyManager;
+        
+        // ===================== THEME PROVIDER AND CONTEXT =====================
+        /**
+         * Theme Provider for Twin3 IA Tracker
+         * Centralized theme management and context for the design system
+         * Integrates all design system managers into a unified interface
+         */
+        class ThemeProvider {
+            constructor() {
+                this.context = {
+                    designTokens: designTokenManager,
+                    i18n: i18nManager,
+                    icons: iconSystemManager,
+                    terminology: terminologyManager,
+                    theme: {
+                        mode: 'dark', // Currently only dark mode supported
+                        primaryColor: 'cyan',
+                        accentColor: 'purple'
+                    },
+                    state: {
+                        isInitialized: false,
+                        currentLanguage: 'zh-TW',
+                        sidebarCollapsed: false,
+                        currentSection: 'classification'
+                    }
+                };
+                
+                this.subscribers = [];
+                this.init();
+            }
+            
+            /**
+             * Initialize the theme provider
+             */
+            init() {
+                this.loadPersistedState();
+                this.setupEventListeners();
+                this.validateThemeIntegrity();
+                this.context.state.isInitialized = true;
+                this.notifySubscribers('init');
+                console.log('✅ Theme provider initialized');
+            }
+            
+            /**
+             * Load persisted state from localStorage
+             */
+            loadPersistedState() {
+                try {
+                    // Load language preference
+                    const savedLang = localStorage.getItem('twin3_language');
+                    if (savedLang && ['zh-TW', 'en'].includes(savedLang)) {
+                        this.context.state.currentLanguage = savedLang;
+                        this.context.i18n.setLanguage(savedLang, true); // skipRender during init
+                    }
+                    
+                    // Load sidebar state
+                    const sidebarState = localStorage.getItem('sidebarCollapsed');
+                    if (sidebarState !== null) {
+                        this.context.state.sidebarCollapsed = sidebarState === 'true';
+                    }
+                    
+                    // Load current section
+                    const currentSection = localStorage.getItem('twin3_current_section');
+                    if (currentSection) {
+                        this.context.state.currentSection = currentSection;
+                    }
+                    
+                    console.log('✅ Theme state loaded from localStorage');
+                } catch (error) {
+                    console.warn('Failed to load persisted theme state:', error);
+                }
+            }
+            
+            /**
+             * Setup event listeners for theme changes
+             */
+            setupEventListeners() {
+                // Listen for language changes
+                document.addEventListener('languageChanged', (event) => {
+                    this.context.state.currentLanguage = event.detail.language;
+                    this.persistState();
+                    this.notifySubscribers('languageChanged', event.detail);
+                });
+                
+                // Listen for sidebar changes
+                document.addEventListener('sidebarToggled', (event) => {
+                    this.context.state.sidebarCollapsed = event.detail.collapsed;
+                    this.persistState();
+                    this.notifySubscribers('sidebarToggled', event.detail);
+                });
+                
+                // Listen for section changes
+                document.addEventListener('sectionChanged', (event) => {
+                    this.context.state.currentSection = event.detail.section;
+                    this.persistState();
+                    this.notifySubscribers('sectionChanged', event.detail);
+                });
+            }
+            
+            /**
+             * Validate theme integrity across all managers
+             */
+            validateThemeIntegrity() {
+                const issues = [];
+                
+                // Validate design tokens
+                if (!this.context.designTokens.validateTokens()) {
+                    issues.push('Design tokens validation failed');
+                }
+                
+                // Validate icon system
+                if (!this.context.icons.validateIconUsage()) {
+                    issues.push('Icon system validation failed');
+                }
+                
+                // Validate terminology
+                if (!this.context.terminology.validateTerminology()) {
+                    issues.push('Terminology validation failed');
+                }
+                
+                if (issues.length > 0) {
+                    console.warn('Theme integrity issues:', issues);
+                    return false;
+                }
+                
+                console.log('✅ Theme integrity validated');
+                return true;
+            }
+            
+            /**
+             * Persist current state to localStorage
+             */
+            persistState() {
+                try {
+                    localStorage.setItem('twin3_language', this.context.state.currentLanguage);
+                    localStorage.setItem('sidebarCollapsed', this.context.state.sidebarCollapsed.toString());
+                    localStorage.setItem('twin3_current_section', this.context.state.currentSection);
+                } catch (error) {
+                    console.warn('Failed to persist theme state:', error);
+                }
+            }
+            
+            /**
+             * Get the current theme context
+             */
+            getContext() {
+                return { ...this.context };
+            }
+            
+            /**
+             * Get a specific manager from the context
+             */
+            getManager(name) {
+                const managers = {
+                    designTokens: this.context.designTokens,
+                    i18n: this.context.i18n,
+                    icons: this.context.icons,
+                    terminology: this.context.terminology
+                };
+                
+                return managers[name];
+            }
+            
+            /**
+             * Update theme configuration
+             */
+            updateTheme(updates) {
+                const oldTheme = { ...this.context.theme };
+                this.context.theme = { ...this.context.theme, ...updates };
+                
+                // Apply theme changes to CSS if needed
+                if (updates.primaryColor && updates.primaryColor !== oldTheme.primaryColor) {
+                    this.applyPrimaryColorChange(updates.primaryColor);
+                }
+                
+                this.persistState();
+                this.notifySubscribers('themeUpdated', { oldTheme, newTheme: this.context.theme });
+            }
+            
+            /**
+             * Apply primary color changes to CSS variables
+             */
+            applyPrimaryColorChange(colorName) {
+                const colorMap = {
+                    cyan: '#00d4ff',
+                    purple: '#a78bfa',
+                    green: '#10b981',
+                    orange: '#f59e0b',
+                    pink: '#ec4899'
+                };
+                
+                const color = colorMap[colorName];
+                if (color) {
+                    this.context.designTokens.updateCSSVariable('--accent-primary', color);
+                    console.log(`✅ Primary color updated to ${colorName}`);
+                }
+            }
+            
+            /**
+             * Subscribe to theme changes
+             */
+            subscribe(callback) {
+                this.subscribers.push(callback);
+                return () => {
+                    const index = this.subscribers.indexOf(callback);
+                    if (index > -1) {
+                        this.subscribers.splice(index, 1);
+                    }
+                };
+            }
+            
+            /**
+             * Notify all subscribers of theme changes
+             */
+            notifySubscribers(event, data = {}) {
+                this.subscribers.forEach(callback => {
+                    try {
+                        callback(event, data, this.context);
+                    } catch (error) {
+                        console.error('Error in theme subscriber:', error);
+                    }
+                });
+            }
+            
+            /**
+             * Get translated text using the i18n manager
+             */
+            t(key) {
+                return this.context.i18n.t(key);
+            }
+            
+            /**
+             * Get design token value
+             */
+            getToken(path) {
+                return this.context.designTokens.getToken(path);
+            }
+            
+            /**
+             * Get standardized button text
+             */
+            getButtonText(key, language = null) {
+                const lang = language || this.context.state.currentLanguage;
+                return this.context.terminology.getButtonText(key, lang);
+            }
+            
+            /**
+             * Get standardized status text
+             */
+            getStatusText(key, language = null) {
+                const lang = language || this.context.state.currentLanguage;
+                return this.context.terminology.getStatusText(key, lang);
+            }
+            
+            /**
+             * Create a standardized icon
+             */
+            createIcon(semanticName, size = 'md', additionalClasses = '') {
+                return this.context.icons.createIcon(semanticName, size, additionalClasses);
+            }
+            
+            /**
+             * Toggle language
+             */
+            toggleLanguage() {
+                const success = this.context.i18n.toggleLanguage();
+                if (success) {
+                    this.context.state.currentLanguage = this.context.i18n.currentLang;
+                    this.persistState();
+                    
+                    // Dispatch custom event
+                    document.dispatchEvent(new CustomEvent('languageChanged', {
+                        detail: { language: this.context.state.currentLanguage }
+                    }));
+                }
+                return success;
+            }
+            
+            /**
+             * Update current section
+             */
+            setCurrentSection(section) {
+                const oldSection = this.context.state.currentSection;
+                this.context.state.currentSection = section;
+                this.persistState();
+                
+                // Dispatch custom event
+                document.dispatchEvent(new CustomEvent('sectionChanged', {
+                    detail: { section, oldSection }
+                }));
+            }
+            
+            /**
+             * Toggle sidebar state
+             */
+            toggleSidebar() {
+                this.context.state.sidebarCollapsed = !this.context.state.sidebarCollapsed;
+                this.persistState();
+                
+                // Dispatch custom event
+                document.dispatchEvent(new CustomEvent('sidebarToggled', {
+                    detail: { collapsed: this.context.state.sidebarCollapsed }
+                }));
+            }
+            
+            /**
+             * Get theme debug information
+             */
+            getDebugInfo() {
+                return {
+                    context: this.context,
+                    subscribers: this.subscribers.length,
+                    designTokens: this.context.designTokens.getAllTokens(),
+                    currentLanguage: this.context.state.currentLanguage,
+                    themeIntegrity: this.validateThemeIntegrity()
+                };
+            }
+        }
+        
+        // Initialize global theme provider
+        const themeProvider = new ThemeProvider();
+        
+        // Make available globally for debugging and external access
+        window.themeProvider = themeProvider;
+        
+        // Legacy compatibility - update existing functions to use theme provider
+        const originalToggleLanguage = toggleLanguage;
+        toggleLanguage = function() {
+            if (typeof themeProvider !== 'undefined' && themeProvider.toggleLanguage) {
+                return themeProvider.toggleLanguage();
+            }
+            // Fallback to i18nManager directly
+            if (typeof i18nManager !== 'undefined') {
+                return i18nManager.toggleLanguage();
+            }
+            return false;
+        };
+        
+        // Safe translation function - does NOT call themeProvider.t to avoid recursion
+        const originalT = t;
+        t = function(key) {
+            // Use i18nManager directly if available
+            if (typeof i18nManager !== 'undefined' && i18nManager.t) {
+                return i18nManager.t(key);
+            }
+            // Fallback to I18N object directly
+            const lang = localStorage.getItem('twin3_lang') || 'zh-TW';
+            return I18N[lang]?.[key] || key;
+        };
+
+        const DATA = {
+            stats: { pages: 5, headerItems: 4, footerItems: 8, tasks: 3, socials: 4, matrix: 256 },
+
+            homepage: [
+                { section: 'Hero', name: '主標題', content: 'Digital Version Of You: Empowering Human...', cta: '—', target: '—', status: '展示' },
+                { section: 'Hero', name: '限時優惠提示', content: 'Gas free minting for early users...', cta: '—', target: '—', status: '展示' },
+                { section: 'Hero', name: '剩餘名額計數器', content: '動態數字 (例: 2750 remaining)', cta: '—', target: '—', status: '動態' },
+                { section: 'Hero', name: 'Free Mint 按鈕', content: '主要 CTA 按鈕', cta: 'Free Mint', target: '觸發錢包連接', status: '互動' },
+                { section: 'Hero', name: '社群快速連結', content: 'X、Element、Farcaster、BscScan 圖標', cta: '4個圖標', target: '各社群平台', status: '外部' },
+                { section: 'Soulbound', name: 'Soulbound Twin 介紹區', content: 'Seal and Encrypt Your Unique Traits...', cta: 'Start now', target: '/dashboard', status: '互動' },
+                { section: 'Soul Injection', name: 'Soul Injection 介紹區', content: '說明將特徵注入個人 AI 代理的協議', cta: '—', target: '—', status: '展示' },
+                { section: 'Agentic', name: 'Agentic Human 介紹區', content: '說明代理人作為 AI 生態系統夥伴賺取價值', cta: '—', target: '—', status: '展示' },
+                { section: 'Plan', name: 'Ch01', content: 'Soul Injection Protocol', cta: '—', target: '—', status: '展示' },
+                { section: 'Plan', name: 'Ch02', content: 'Third Party Integration', cta: '—', target: '—', status: '展示' },
+                { section: 'Plan', name: 'Ch03', content: 'Cross Ecosystem Connection', cta: '—', target: '—', status: '展示' },
+                { section: 'Plan', name: 'Ch04', content: 'Agentic human protocol', cta: '—', target: '—', status: '展示' },
+                { section: 'Plan', name: 'Ch05', content: 'Intelligence to earn economy', cta: '—', target: '—', status: '展示' },
+                { section: 'Plan', name: 'Ch06', content: 'Digital world expansion', cta: '—', target: '—', status: '展示' },
+                { section: 'Plan', name: 'Ch07', content: 'Co-existence evolution', cta: '—', target: '—', status: '展示' },
+                { section: '視覺', name: 'Tesseract 3D 動畫', content: '中央旋轉的幾何體，隨滾動演變', cta: '—', target: '—', status: '動畫' },
+                { section: '視覺', name: 'Hex Grid 背景', content: '深色六角網格 + 發光線條', cta: '—', target: '—', status: '動畫' }
+            ],
+
+            mytwin: {
+                stats: [
+                    { metric: 'Twin Matrix', desc: '已完成維度 / 256 總維度', type: '展示' },
+                    { metric: 'Points', desc: '累積積分數量', type: '展示' },
+                    { metric: 'Invited Tasks', desc: '受邀請任務數', type: '展示' },
+                    { metric: 'Completed Tasks', desc: '已完成任務數', type: '展示' },
+                    { metric: 'Completion Rate', desc: '完成率百分比', type: '展示' }
+                ],
+                matrix: [
+                    { element: '矩陣結構', desc: '16×16 圓點網格 = 256 個節點' },
+                    { element: '座標標記', desc: '左側十六進位標籤 (0000–00F0)' },
+                    { element: '節點狀態', desc: '未啟用 (灰色) / 已啟用 (漸層)' },
+                    { element: '視覺風格', desc: '黑底 + 灰色圓點 + 藍色外框' },
+                    { element: '資訊圖示', desc: '矩陣標題旁 (i) 說明按鈕' }
+                ],
+                shapes: [
+                    { shape: 'Tetrahedron', name: '四面體', color: '紅色' },
+                    { shape: 'Hexahedron', name: '六面體/立方體', color: '綠色' },
+                    { shape: 'Octahedron', name: '八面體', color: '黃色' },
+                    { shape: 'Icosahedron', name: '二十面體', color: '藍色' },
+                    { shape: 'Dodecahedron', name: '十二面體', color: '品紅' },
+                    { shape: 'Tesseract', name: '超正方體', color: '銀白' }
+                ],
+                update: [
+                    { step: 'Step 01', element: '標題：SELECT a Token for Transaction Fee Payment', status: '展示' },
+                    { step: 'Step 01', element: 'Token 選擇器 (下拉選單：USDT, BNB 等)', status: '互動' },
+                    { step: 'Step 01', element: '金額輸入框 "Enter USD amount"', status: '互動' },
+                    { step: '說明', element: '每 1 USD = 1 積分，可兌換 Genesis NFT', status: '展示' },
+                    { step: 'Step 02', element: 'CONFIRM 按鈕', status: 'Soon' }
+                ]
+            },
+
+            tasks: [
+                { id: '#001', path: '/tasks/1', name: 'Proof of Humanity', desc: '證明用戶為真人，非機器人', levels: 'L1: ReCAPTCHA V2 (Done) | L2: Mobile Auth (Pending)', reward: '完成 L2 獲得 DNA NFT' },
+                { id: '#002', path: '/tasks/2', name: 'Invite more humans to join', desc: '邀請其他真人加入，對抗 AI 機器人', levels: 'Referral 邀請機制', reward: '貢獻至 Referral Score {0x(00C0)}' },
+                { id: '#003', path: '/tasks/3', name: 'Validate network authenticity', desc: 'Web3 知識評估 (Bitcoin, Ethereum, NFTs, DeFi)', levels: '知識問答測驗', reward: '分數越高 = Web3 見解越廣' }
+            ],
+
+            header: [
+                { item: 'Logo', target: '/', type: '內部', login: 'No' },
+                { item: 'WHITEPAPER', target: 'IEEE 論文', type: '外部', login: 'No' },
+                { item: 'MY TWIN', target: '/dashboard', type: '內部', login: 'Required' },
+                { item: '連接錢包', target: 'RainbowKit Modal', type: '互動', login: '—' }
+            ],
+
+            footer: [
+                { link: 'X (Twitter)', target: 'x.com/twin3_ai', type: '社群', newTab: 'Yes' },
+                { link: 'Element', target: 'NFT 收藏頁', type: 'NFT', newTab: 'Yes' },
+                { link: 'Warpcast', target: 'Farcaster 頁', type: '社群', newTab: 'Yes' },
+                { link: 'BscScan', target: 'Token 合約', type: '區塊鏈', newTab: 'Yes' },
+                { link: 'Whitepaper', target: 'IEEE 論文', type: '資源', newTab: 'Yes' },
+                { link: 'Tasks', target: '/tasks/1', type: '內部', newTab: 'No' },
+                { link: 'My Twin', target: '/dashboard', type: '內部', newTab: 'No' },
+                { link: 'Subscribe', target: 'LinkedIn 公司頁', type: '社群', newTab: 'Yes' }
+            ],
+
+            external: [
+                { name: 'IEEE Whitepaper', url: 'ieeexplore.ieee.org/document/10734204', category: '文件', location: 'Header, Footer' },
+                { name: 'X (Twitter)', url: 'x.com/twin3_ai', category: '社群', location: 'Hero, Footer' },
+                { name: 'Element NFT', url: 'element.market/...', category: 'NFT 市場', location: 'Hero, Footer' },
+                { name: 'Farcaster (Warpcast)', url: 'warpcast.com/...', category: '社群', location: 'Hero, Footer' },
+                { name: 'BscScan Token', url: 'bscscan.com/token/...', category: '區塊鏈', location: 'Hero, Footer' },
+                { name: 'LinkedIn', url: 'linkedin.com/company/...', category: '社群', location: 'Footer (Subscribe)' }
+            ],
+
+            widgets: [
+                { id: 'twin_matrix', name: 'TwinMatrixWidget', type: 'Widget Card', trigger: 'twin_matrix', triggerWords: '矩陣 / matrix / 256d / profile', desc: '256 維度視覺化 + 6 大維度分數', interaction: 'Mint SBT 按鈕', status: 'todo' },
+                { id: 'instagram_connect', name: 'InstagramConnectWidget', type: 'Widget Card', trigger: 'verify_human', triggerWords: '驗證 / verify / Instagram / 連接', desc: 'Instagram OAuth 連接流程', interaction: 'Connect 按鈕', status: 'todo' },
+                { id: 'global_dashboard', name: 'GlobalDashboardWidget', type: 'Widget Card', trigger: 'dashboard', triggerWords: 'dashboard / 看板 / my tasks', desc: '任務看板 (待處理/待審核/完成)', interaction: 'Tab 切換、任務點擊', status: 'todo' },
+                { id: 'active_task', name: 'ActiveTaskWidget', type: 'Widget Card', trigger: 'accept_task', triggerWords: '接案後自動顯示', desc: '待處理任務追蹤與提交', interaction: 'Submit、Timer', status: 'todo' },
+                { id: 'score_progress', name: 'ScoreProgressWidget', type: 'Widget Card', trigger: '側邊欄常駐', triggerWords: '—', desc: '分數進度環形圖', interaction: '任務點擊跳轉', status: 'todo' },
+                { id: 'task_opportunity', name: 'TaskOpportunityCard', type: 'Widget Card', trigger: 'browse_tasks', triggerWords: '任務 / task / browse / jobs', desc: '品牌任務卡片列表', interaction: 'View Details、Accept', status: 'todo' },
+                { id: 'humanity_task', name: 'HumanityTaskCard', type: 'Widget Card', trigger: '(待建立)', triggerWords: '人類驗證 / humanity / proof', desc: 'Level 1 + Level 2 任務步驟', interaction: 'Start 按鈕', status: 'todo' },
+                { id: 'invite_task', name: 'InviteTaskCard', type: 'Widget Card', trigger: '(待建立)', triggerWords: '邀請 / invite / referral', desc: '邀請碼生成與追蹤', interaction: 'Copy Link', status: 'todo' },
+                { id: 'web3_quiz', name: 'Web3QuizCard', type: 'Widget Card', trigger: '(待建立)', triggerWords: '測驗 / quiz / web3', desc: 'Web3 知識問答', interaction: '選項點擊', status: 'todo' }
+            ],
+
+            bubbles: [
+                { id: 'onboarding', name: 'Onboarding 歡迎', type: 'Hint Bubble', source: '首次進入', component: 'feature_grid', desc: '歡迎訊息 + 功能介紹卡' },
+                { id: 'human_verify', name: 'Human 驗證提示', type: 'Hint Bubble', source: '側邊欄', component: 'Icon + Bubble', desc: '單一 icon 觸發驗證流程' },
+                { id: 'task_nodes', name: '任務觸發節點', type: 'Hint Bubble', source: '側邊欄', component: 'Dynamic Icons', desc: '驗證後依 persona 顯示' },
+                { id: 'faq_ai', name: 'FAQ / What is twin3', type: 'AI 提醒', source: '對話流', component: 'AI Response', desc: '封閉式 AI 回答常見問題' },
+                { id: 'strategic_plan', name: 'Plan', type: 'Hint Bubble', source: '首頁', component: 'Info Card', desc: 'Ch01-Ch07 時程說明' },
+                { id: 'gas_free', name: 'Gas Free Minting', type: 'Hint Bubble', source: '側邊欄', component: 'Sidebar Card', desc: '限時優惠提示' }
+            ],
+
+            onboardingNodes: [
+                { node: 'Onboarding 歡迎', timing: '首次進入 (自動)', icon: 'message-circle' },
+                { node: '人類驗證 (Shield)', timing: '側邊欄常駐 (鎖定狀態)', icon: 'shield' },
+                { node: 'Instagram 連接', timing: '點擊 Shield 觸發', icon: 'instagram' },
+                { node: '身分驗證 (L1/L2)', timing: '連接後顯示', icon: 'check-circle' },
+                { node: '邀請任務', timing: '驗證成功後解鎖', icon: 'users' },
+                { node: 'Web3 測驗', timing: '驗證成功後解鎖', icon: 'book-open' },
+                { node: '品牌任務', timing: '驗證成功後解鎖', icon: 'target' },
+                { node: 'Twin Matrix', timing: '驗證成功後自動顯示', icon: 'grid-3x3' },
+                { node: '任務機會', timing: '驗證成功後推薦', icon: 'briefcase' }
+            ],
+
+            classification: [
+                { module: 'Twin Matrix 視覺化', category: 'Widget Card', source: '/dashboard', component: 'TwinMatrixWidget', desc: '256 維度矩陣 + 6 大維度分數' },
+                { module: 'Twin Matrix Summary', category: 'Widget Card', source: '/dashboard', component: 'ScoreProgressWidget', desc: '統計指標 (Points, Tasks, Rate)' },
+                { module: 'Instagram 連接驗證', category: 'Widget Card', source: '/tasks/1', component: 'InstagramConnectWidget', desc: '社群帳號連接流程' },
+                { module: 'Human 驗證流程', category: 'Widget Card', source: '/tasks/1', component: 'VerificationWidget', desc: 'ReCAPTCHA + Mobile Auth' },
+                { module: '任務看板 Dashboard', category: 'Widget Card', source: '/dashboard', component: 'GlobalDashboardWidget', desc: '任務狀態追蹤、進度管理' },
+                { module: '任務機會卡片', category: 'Widget Card', source: '對話流', component: 'TaskOpportunityCard', desc: '品牌任務展示與接案' },
+                { module: '進行中任務', category: 'Widget Card', source: '對話流', component: 'ActiveTaskWidget', desc: '任務進度追蹤、提交' },
+                { module: 'Onboarding 歡迎', category: 'Hint Bubble', source: '首次進入', component: 'feature_grid', desc: '歡迎訊息 + 功能介紹卡' },
+                { module: 'Human 驗證提示', category: 'Hint Bubble', source: '側邊欄', component: 'Icon + Bubble', desc: '單一 icon 觸發驗證流程' },
+                { module: '任務觸發節點', category: 'Hint Bubble', source: '側邊欄', component: 'Dynamic Icons', desc: '驗證後依 persona 顯示' },
+                { module: 'FAQ / What is twin3', category: 'AI 提醒', source: '對話流', component: 'AI Response', desc: '封閉式 AI 回答常見問題' },
+                { module: 'Plan', category: 'Hint Bubble', source: '首頁', component: 'Info Card', desc: 'Ch01-Ch07 時程說明' },
+                { module: 'Gas Free Minting', category: 'Hint Bubble', source: '側邊欄', component: 'Sidebar Card', desc: '限時優惠提示' }
+            ],
+
+            triggers: [
+                { id: 'welcome', triggers: 'start, hi, hello, menu', responseType: 'Card', widget: 'feature_grid', suggestedActions: 'Get Started, How It Works, View Tasks', source: 'legacy' },
+                { id: 'how_it_works', triggers: 'how, how it works, explain, what is', responseType: 'Text', widget: '—', suggestedActions: 'Get Started, View Tasks', source: 'legacy' },
+                { id: 'twin_matrix', triggers: 'matrix, twin matrix, 256d, profile', responseType: 'Widget', widget: 'twin_matrix', suggestedActions: 'Mint SBT, Verify, Browse Tasks', source: 'legacy' },
+                { id: 'verify_human', triggers: 'verify, verification, prove, human', responseType: 'Widget', widget: 'instagram_connect', suggestedActions: '—', source: 'legacy' },
+                { id: 'browse_tasks', triggers: 'task, browse, jobs', responseType: 'Card', widget: 'task_opportunity', suggestedActions: 'View Matrix, Verify, Browse', source: 'legacy' },
+                { id: 'dashboard', triggers: 'dashboard, my tasks, status', responseType: 'Widget', widget: 'global_dashboard', suggestedActions: 'Browse More Tasks', source: 'legacy' },
+                { id: 'accept_task', triggers: 'accept, confirm', responseType: 'Widget', widget: 'active_task', suggestedActions: 'View More Tasks', source: 'legacy' },
+                { id: 'humanity_task', triggers: '人類驗證, humanity, proof of humanity', responseType: 'Widget', widget: 'humanity_task (待建)', suggestedActions: '—', source: 'todo' },
+                { id: 'verify_success', triggers: '流程事件: 驗證成功', responseType: 'System Event', widget: 'twin_matrix + task_opportunity', suggestedActions: '解鎖側邊欄, 顯示任務推薦', source: 'todo' },
+                { id: 'invite_task', triggers: '邀請, invite, referral, 推薦', responseType: 'Widget', widget: 'invite_task (待建)', suggestedActions: '—', source: 'todo' },
+                { id: 'web3_quiz', triggers: '測驗, quiz, web3, 知識', responseType: 'Widget', widget: 'web3_quiz (待建)', suggestedActions: '—', source: 'todo' },
+                { id: 'strategic_plan', triggers: '時程, roadmap, plan, chapter', responseType: 'Text + Card', widget: 'Info Card (待建)', suggestedActions: '—', source: 'todo' }
+            ],
+
+            faqPersonas: [
+                { persona: '驗證者', icon: 'shield', motivation: '證明人類身份', questions: ['為什麼要驗證身份？', '我的數據會被怎麼使用？', '驗證後可以獲得什麼？', 'Level 1 和 Level 2 差別？', '驗證失敗怎麼辦？'] },
+                { persona: '空投獵人', icon: 'gift', motivation: '賺取代幣', questions: ['怎麼獲得空投？', '$twin3 token 有什麼用？', '空投什麼時候發放？', '需要投入多少成本？', '這是 scam 嗎？'] },
+                { persona: '做任務加入', icon: 'check-square', motivation: '完成任務', questions: ['有哪些任務可以做？', '任務獎勵是什麼？', '怎麼提交任務成果？', '審核需要多久？', '任務失敗會扣分嗎？'] },
+                { persona: '投資人', icon: 'briefcase', motivation: '了解項目', questions: ['Twin3 的商業模式？', 'Token 經濟模型？', '團隊背景是什麼？', '有哪些合作夥伴？', 'Roadmap 是什麼？'] },
+                { persona: '數據管理者', icon: 'lock', motivation: '數據安全', questions: ['Twin Matrix 是什麼？', '我的數據存在哪裡？', 'Soulbound Token 是什麼？', '可以刪除我的數據嗎？', '數據會被賣給第三方嗎？'] },
+                { persona: 'KOL/創作者', icon: 'palette', motivation: '品牌合作', questions: ['怎麼接品牌任務？', '分數怎麼計算？', '需要多少粉絲才能接案？', '可以同時接多個任務嗎？', '獎勵怎麼提領？'] }
+            ],
+
+            existingWidgets: [
+                { file: 'TwinMatrixWidget.tsx', path: 'features/widgets/', status: 'todo', iaMatch: 'TwinMatrixWidget' },
+                { file: 'InstagramConnectWidget.tsx', path: 'features/widgets/', status: 'todo', iaMatch: 'InstagramConnectWidget' },
+                { file: 'GlobalDashboardWidget.tsx', path: 'features/widgets/', status: 'todo', iaMatch: 'GlobalDashboardWidget' },
+                { file: 'ActiveTaskWidget.tsx', path: 'features/widgets/', status: 'todo', iaMatch: 'ActiveTaskWidget' },
+                { file: 'ScoreProgressWidget.tsx', path: 'features/widgets/', status: 'todo', iaMatch: 'ScoreProgressWidget' },
+                { file: 'VerificationWidget.tsx', path: 'features/widgets/', status: 'todo', iaMatch: 'VerificationWidget' },
+                { file: 'TaskOpportunityCard.tsx', path: 'features/cards/', status: 'todo', iaMatch: 'TaskOpportunityCard' },
+                { file: 'TaskDetailModal.tsx', path: 'features/cards/', status: 'todo', iaMatch: '—' },
+                { file: 'DevConsole.tsx', path: 'features/widgets/', status: 'todo', iaMatch: '— (Dev Tool)' },
+                { file: 'HumanityTaskCard.tsx', path: '(待建立)', status: 'todo', iaMatch: 'HumanityTaskCard' },
+                { file: 'InviteTaskCard.tsx', path: '(待建立)', status: 'todo', iaMatch: 'InviteTaskCard' },
+                { file: 'Web3QuizCard.tsx', path: '(待建立)', status: 'todo', iaMatch: 'Web3QuizCard' }
+            ],
+
+            web2Accounts: [
+                { platform: 'Instagram', priority: 'P0', desc: 'KOL 主要平台，圖文/Reels', authMethod: 'OAuth 2.0', status: 'todo', icon: 'instagram' },
+                { platform: 'YouTube', priority: 'P0', desc: '影音創作者，長/短影片', authMethod: 'Google OAuth', status: 'todo', icon: 'youtube' },
+                { platform: 'TikTok', priority: 'P1', desc: '短影音平台', authMethod: 'OAuth 2.0', status: 'todo', icon: 'music' },
+                { platform: 'X (Twitter)', priority: 'P1', desc: '社群互動、即時消息', authMethod: 'OAuth 2.0', status: 'todo', icon: 'twitter' },
+                { platform: 'Facebook', priority: 'P2', desc: '粉專/社團經營', authMethod: 'Meta OAuth', status: 'todo', icon: 'facebook' },
+                { platform: 'Threads', icon: 'at-sign', priority: 'P2', desc: 'Meta 文字社群', authMethod: 'Meta OAuth', status: 'todo' }
+            ]
+        };
+
+        // ===================== HELPERS =====================
+        // Badge 顏色對應規則：
+        // - badge-cyan: 分類標籤 (section, category, type)
+        // - badge-purple: 待開發狀態
+        // - badge-green: 互動元素
+        // - badge-orange: 即將推出 (Soon)
+        // - badge-gray: 展示/靜態內容
+        // - badge-pink: 外部連結/社群
+        function getStatusBadge(status) {
+            const statusMap = {
+                'todo': { class: 'badge-purple', label: '待開發' },
+                'active': { class: 'badge-purple', label: '待開發' },
+                'pending': { class: 'badge-purple', label: '待開發' },
+                'done': { class: 'badge-green', label: '已完成' },
+                'draft': { class: 'badge-gray', label: '草稿' },
+                'legacy': { class: 'badge-gray', label: 'legacy' },
+                'deprecated': { class: 'badge-gray', label: 'deprecated' },
+                'System Event': { class: 'badge-cyan', label: 'System Event' }
+            };
+            const config = statusMap[status] || { class: 'badge-gray', label: status };
+            return `<span class="badge ${config.class}">${config.label}</span>`;
+        }
+
+        // ===================== STATE =====================
+        let checkState = JSON.parse(localStorage.getItem('twin3_ia_checks') || '{}');
+        // currentSection is now managed by themeProvider.context.state.currentSection
+
+        function saveState() { localStorage.setItem('twin3_ia_checks', JSON.stringify(checkState)); }
+        function toggleCheck(id) { 
+            checkState[id] = !checkState[id]; 
+            saveState(); 
+            const currentSection = (typeof themeProvider !== 'undefined' && themeProvider.context) 
+                ? themeProvider.context.state.currentSection 
+                : 'classification';
+            renderSection(currentSection); 
+        }
+
+        // ===================== SIDEBAR =====================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleIcon = document.getElementById('toggle-icon');
+            sidebar.classList.toggle('collapsed');
+
+            // Update theme provider state if available
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            
+            if (typeof themeProvider !== 'undefined' && themeProvider.context) {
+                themeProvider.context.state.sidebarCollapsed = isCollapsed;
+                themeProvider.persistState();
+            } else {
+                // Fallback to localStorage directly
+                localStorage.setItem('sidebarCollapsed', isCollapsed.toString());
+            }
+
+            if (isCollapsed) {
+                toggleIcon.setAttribute('data-lucide', 'panel-left-open');
+            } else {
+                toggleIcon.setAttribute('data-lucide', 'panel-left-close');
+            }
+            lucide.createIcons();
+            
+            // Dispatch event for theme provider
+            document.dispatchEvent(new CustomEvent('sidebarToggled', {
+                detail: { collapsed: isCollapsed }
+            }));
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('active');
+        }
+
+        function closeMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+        }
+
+        // Initialize Responsive State
+        function initResponsive() {
+            const width = window.innerWidth;
+            const sidebar = document.getElementById('sidebar');
+            const toggleIcon = document.getElementById('toggle-icon');
+            
+            // Get sidebar state from theme provider or localStorage
+            let shouldCollapse = false;
+            if (typeof themeProvider !== 'undefined' && themeProvider.context) {
+                shouldCollapse = themeProvider.context.state.sidebarCollapsed;
+            } else {
+                shouldCollapse = localStorage.getItem('sidebarCollapsed') === 'true';
+            }
+
+            // Tablet: Auto-collapse if not already set by user
+            if (width > 768 && width <= 1024) {
+                if (shouldCollapse) {
+                    sidebar.classList.add('collapsed');
+                    toggleIcon.setAttribute('data-lucide', 'panel-left-open');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    toggleIcon.setAttribute('data-lucide', 'panel-left-close');
+                }
+            }
+
+            // Restore user preference for Desktop if relevant
+            if (width > 1024) {
+                if (shouldCollapse) {
+                    sidebar.classList.add('collapsed');
+                    toggleIcon.setAttribute('data-lucide', 'panel-left-open');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    toggleIcon.setAttribute('data-lucide', 'panel-left-close');
+                }
+            }
+
+            // Mobile: Ensure sidebar is closed by default and not collapsed
+            if (width <= 768) {
+                sidebar.classList.remove('collapsed'); // Remove collapsed class for mobile drawer
+                sidebar.classList.remove('mobile-open');
+                document.getElementById('sidebar-overlay').classList.remove('active');
+            }
+        }
+
+        // Listen for resize to handle transitions if needed, or just let CSS handle it
+        window.addEventListener('resize', () => {
+            // Optional: close mobile menu on resize to desktop
+            if (window.innerWidth > 768) {
+                closeMobileSidebar();
+            }
+            initResponsive(); // Re-evaluate sidebar state on resize
+            lucide.createIcons(); // Re-render icons after potential changes
+        });
+
+        // ===================== RENDER =====================
+        // currentSection is managed by theme provider now
+        // Fallback translation function for when themeProvider is not ready
+        let currentSectionState = 'classification';
+        
+        function safeT(key) {
+            if (typeof themeProvider !== 'undefined' && themeProvider.t) {
+                return t(key);
+            }
+            // Fallback to I18N object directly
+            const lang = localStorage.getItem('twin3_lang') || 'zh-TW';
+            return I18N[lang]?.[key] || key;
+        }
+
+        function showSection(id) {
+            currentSectionState = id;
+            
+            // Update theme provider state if available
+            if (typeof themeProvider !== 'undefined' && themeProvider.setCurrentSection) {
+                themeProvider.setCurrentSection(id);
+            }
+            
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            // Find nav item by onclick attribute matching the id
+            const navItem = Array.from(document.querySelectorAll('.nav-item')).find(item => {
+                const onclick = item.getAttribute('onclick');
+                return onclick && onclick.includes(`'${id}'`);
+            });
+
+            if (navItem) {
+                navItem.classList.add('active');
+            } else {
+                // Fallback: try to find by click event if triggered by user interaction
+                try {
+                    if (window.event && window.event.target && typeof window.event.target.closest === 'function') {
+                        const clickedNav = window.event.target.closest('.nav-item');
+                        if (clickedNav) {
+                            clickedNav.classList.add('active');
+                        }
+                    }
+                } catch (e) {
+                    // Ignore errors during initialization
+                }
+            }
+            renderSection(id);
+        }
+
+        function navTo(id) {
+            currentSectionState = id;
+            
+            // Update theme provider state if available
+            if (typeof themeProvider !== 'undefined' && themeProvider.setCurrentSection) {
+                themeProvider.setCurrentSection(id);
+            }
+            
+            document.querySelectorAll('.nav-item').forEach(n => {
+                n.classList.remove('active');
+                if (n.getAttribute('onclick')?.includes(`'${id}'`)) n.classList.add('active');
+            });
+            renderSection(id);
+        }
+
+        function renderSection(id) {
+            const content = document.getElementById('content');
+            const titles = {
+                'overview': safeT('nav.overview'), 
+                'ia-diagram': safeT('nav.ia_diagram'), 
+                'homepage': safeT('nav.homepage'),
+                'mytwin': safeT('nav.mytwin'), 
+                'tasks': safeT('nav.tasks'), 
+                'navigation': safeT('nav.navigation'),
+                'external': safeT('nav.external'), 
+                'widgets': safeT('title.widget_list'), 
+                'triggers': safeT('nav.triggers'),
+                'onboarding': safeT('nav.onboarding'), 
+                'personas': safeT('nav.personas'), 
+                'web2accounts': safeT('nav.web2'),
+                'classification': safeT('nav.classification')
+            };
+            document.getElementById('page-title').textContent = titles[id] || id;
+            document.getElementById('breadcrumb-current').textContent = titles[id] || id;
+
+            const renderers = {
+                'overview': renderOverview,
+                'ia-diagram': renderDiagram,
+                'homepage': renderHomepage,
+                'mytwin': renderMyTwin,
+                'tasks': renderTasks,
+                'navigation': renderNavigation,
+                'external': renderExternal,
+                'widgets': renderWidgets,
+                'triggers': renderTriggers,
+                'onboarding': renderOnboarding,
+                'personas': renderPersonas,
+                'web2accounts': renderWeb2Accounts,
+                'classification': renderClassification
+            };
+            
+            content.innerHTML = renderers[id] ? renderers[id]() : '<p>Section not found</p>';
+            lucide.createIcons();
+            if (id === 'ia-diagram' || id === 'onboarding') mermaid.run();
+        }
+
+        function renderOverview() {
+            // 動態計算開發進度統計
+            const widgetStats = {
+                total: DATA.widgets.length,
+                done: DATA.widgets.filter(w => w.status === 'done').length,
+                todo: DATA.widgets.filter(w => w.status === 'todo' || w.status === 'active' || w.status === 'pending').length
+            };
+            
+            const bubbleStats = {
+                total: DATA.bubbles.length,
+                done: DATA.bubbles.filter(b => b.status === 'done').length,
+                todo: DATA.bubbles.filter(b => !b.status || b.status === 'todo').length
+            };
+            
+            // 首頁元件統計 (根據 status 判斷)
+            const homepageStats = {
+                total: DATA.homepage.length,
+                done: DATA.homepage.filter(h => h.status === '展示' || h.status === '動畫').length,
+                todo: DATA.homepage.filter(h => h.status === '互動' || h.status === '動態').length
+            };
+            
+            // My Twin 元件統計
+            const mytwinTotal = DATA.mytwin.stats.length + DATA.mytwin.matrix.length + DATA.mytwin.shapes.length + DATA.mytwin.update.length;
+            const mytwinDone = DATA.mytwin.stats.filter(s => s.type === '展示').length + 
+                              DATA.mytwin.matrix.length + 
+                              DATA.mytwin.shapes.length +
+                              DATA.mytwin.update.filter(u => u.status === '展示').length;
+            const mytwinTodo = mytwinTotal - mytwinDone;
+            
+            // Tasks 頁面統計
+            const tasksStats = {
+                total: DATA.tasks.length,
+                done: DATA.tasks.filter(t => t.levels && t.levels.includes('Done')).length,
+                todo: DATA.tasks.filter(t => !t.levels || !t.levels.includes('Done')).length
+            };
+            
+            // Web2 帳號統計
+            const web2Stats = {
+                total: DATA.web2Accounts ? DATA.web2Accounts.length : 0,
+                done: DATA.web2Accounts ? DATA.web2Accounts.filter(a => a.status === 'done').length : 0,
+                todo: DATA.web2Accounts ? DATA.web2Accounts.filter(a => a.status === 'todo' || !a.status).length : 0
+            };
+            
+            // 總計
+            const totalItems = widgetStats.total + bubbleStats.total + web2Stats.total;
+            const totalDone = widgetStats.done + bubbleStats.done + web2Stats.done;
+            const totalTodo = widgetStats.todo + bubbleStats.todo + web2Stats.todo;
+            
+            return `
+                <div class="stats-grid">
+                    <div class="metric-card interactive-element" onclick="navTo('widgets')">
+                        <div class="metric-value">${widgetStats.total}</div>
+                        <div class="metric-label">Widget Cards</div>
+                    </div>
+                    <div class="metric-card interactive-element" onclick="navTo('widgets')">
+                        <div class="metric-value">${bubbleStats.total}</div>
+                        <div class="metric-label">Hint Bubble</div>
+                    </div>
+                    <div class="metric-card interactive-element" onclick="navTo('web2accounts')">
+                        <div class="metric-value">${web2Stats.total}</div>
+                        <div class="metric-label">Web2 帳號</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="color: var(--accent-green)">${totalDone}</div>
+                        <div class="metric-label">已完成</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="color: var(--accent-purple)">${totalTodo}</div>
+                        <div class="metric-label">待開發</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${totalItems}</div>
+                        <div class="metric-label">總計項目</div>
+                    </div>
+                </div>
+                <div class="card"><div class="card-header"><span class="table-title" data-i18n="overview.progress">${t('overview.progress')}</span></div>
+                <table id="overview-table"><thead><tr><th onclick="sortTable('overview-table', 0)" data-i18n="overview.category">${t('overview.category')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('overview-table', 1)" data-i18n="overview.count">${t('overview.count')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('overview-table', 2)" data-i18n="overview.done">${t('overview.done')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('overview-table', 3)" data-i18n="overview.todo">${t('overview.todo')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th></th></tr></thead>
+                <tbody>
+                    <tr><td>Widget Cards</td><td>${widgetStats.total}</td><td>${widgetStats.done}</td><td>${widgetStats.todo}</td><td><button class="btn btn-primary btn-sm" onclick="navTo('widgets')" data-i18n="overview.view">${t('overview.view')}</button></td></tr>
+                    <tr><td>Hint Bubble</td><td>${bubbleStats.total}</td><td>${bubbleStats.done}</td><td>${bubbleStats.todo}</td><td><button class="btn btn-primary btn-sm" onclick="navTo('widgets')" data-i18n="overview.view">${t('overview.view')}</button></td></tr>
+                    <tr><td>Web2 帳號連結</td><td>${web2Stats.total}</td><td>${web2Stats.done}</td><td>${web2Stats.todo}</td><td><button class="btn btn-primary btn-sm" onclick="navTo('web2accounts')" data-i18n="overview.view">${t('overview.view')}</button></td></tr>
+                    <tr><td data-i18n="overview.home_comp">${t('overview.home_comp')}</td><td>${homepageStats.total}</td><td>${homepageStats.done}</td><td>${homepageStats.todo}</td><td><button class="btn btn-primary btn-sm" onclick="navTo('homepage')" data-i18n="overview.view">${t('overview.view')}</button></td></tr>
+                    <tr><td data-i18n="overview.mytwin_comp">${t('overview.mytwin_comp')}</td><td>${mytwinTotal}</td><td>${mytwinDone}</td><td>${mytwinTodo}</td><td><button class="btn btn-primary btn-sm" onclick="navTo('mytwin')" data-i18n="overview.view">${t('overview.view')}</button></td></tr>
+                    <tr><td data-i18n="overview.tasks_page">${t('overview.tasks_page')}</td><td>${tasksStats.total}</td><td>${tasksStats.done}</td><td>${tasksStats.todo}</td><td><button class="btn btn-primary btn-sm" onclick="navTo('tasks')" data-i18n="overview.view">${t('overview.view')}</button></td></tr>
+                </tbody></table></div>`;
+        }
+
+        function renderDiagram() {
+            // Store mermaid codes for modal
+            window.diagramCodes = {
+                'ia-structure': `flowchart TB
+    subgraph SITE["twin3.ai"]
+        direction TB
+        
+        subgraph GLOBAL["全站導覽"]
+            HEADER["Header 導覽"]
+            FOOTER["Footer 連結"]
+        end
+        
+        subgraph PAGES["主要頁面"]
+            HOME["Home /"]
+            MYTWIN["My Twin /dashboard"]
+            TASKS["Tasks /tasks/*"]
+            GENESIS["Genesis /genesis"]
+        end
+    end
+    
+    subgraph HEADER_ITEMS["Header 項目"]
+        H1["Logo → /"]
+        H2["WHITEPAPER → IEEE"]
+        H3["MY TWIN → /dashboard"]
+        H4["連接錢包"]
+    end
+    
+    subgraph FOOTER_ITEMS["Footer 項目"]
+        F1["社群連結 x4"]
+        F2["Whitepaper"]
+        F3["Tasks"]
+        F4["My Twin"]
+        F5["Newsletter"]
+    end
+    
+    subgraph HOME_SECTIONS["首頁區塊"]
+        HS1["Hero 區"]
+        HS2["Soulbound Twin 介紹"]
+        HS3["Soul Injection 介紹"]
+        HS4["Agentic Human 介紹"]
+        HS5["Plan Ch01-07"]
+    end
+    
+    subgraph MYTWIN_SECTIONS["My Twin 區塊"]
+        MS1["統計區 5個指標"]
+        MS2["Twin Matrix 256維度網格"]
+        MS3["幾何體展示 6種形狀"]
+        MS4["Update 面板 Soon"]
+    end
+    
+    subgraph TASK_PAGES["Tasks 頁面"]
+        T1["#001 Proof of Humanity"]
+        T2["#002 Invite Humans"]
+        T3["#003 Validate Network"]
+    end
+    
+    HEADER --> HEADER_ITEMS
+    FOOTER --> FOOTER_ITEMS
+    HOME --> HOME_SECTIONS
+    MYTWIN --> MYTWIN_SECTIONS
+    TASKS --> TASK_PAGES
+    
+    classDef primaryNode fill:transparent,stroke:#00d4ff,stroke-width:1px,color:#00d4ff
+    classDef secondaryNode fill:transparent,stroke:#a78bfa,stroke-width:1px,color:#a78bfa
+    classDef successNode fill:transparent,stroke:#30d158,stroke-width:1px,color:#30d158
+    classDef warningNode fill:transparent,stroke:#ff9f0a,stroke-width:1px,color:#ff9f0a
+    classDef infoNode fill:transparent,stroke:#3f3f46,stroke-width:1px,color:#fff
+    
+    class SITE primaryNode
+    class GLOBAL,PAGES secondaryNode
+    class HOME_SECTIONS,MYTWIN_SECTIONS,TASK_PAGES successNode
+    class HEADER_ITEMS,FOOTER_ITEMS infoNode`,
+                'user-flow': `flowchart LR
+    subgraph USER_FLOW["使用者流程"]
+        START(("進入網站")) --> HOME["首頁"]
+        HOME --> |"Free Mint"| WALLET["連接錢包"]
+        HOME --> |"Start Now"| MYTWIN["My Twin"]
+        HOME --> |"Whitepaper"| WP["IEEE 論文"]
+        
+        WALLET --> MYTWIN
+        MYTWIN --> |"完成任務"| TASKS["Tasks"]
+        MYTWIN --> |"查看 NFT"| GENESIS["Genesis"]
+        
+        TASKS --> T1["Task #1 Humanity"]
+        TASKS --> T2["Task #2 Invite"]
+        TASKS --> T3["Task #3 Web3 Quiz"]
+        
+        T1 --> |"完成 L1+L2"| NFT["DNA NFT"]
+    end
+    
+    classDef startNode fill:transparent,stroke:#00d4ff,stroke-width:1px,color:#00d4ff
+    classDef processNode fill:transparent,stroke:#a78bfa,stroke-width:1px,color:#a78bfa
+    classDef successNode fill:transparent,stroke:#30d158,stroke-width:1px,color:#30d158
+    classDef taskNode fill:transparent,stroke:#ff9f0a,stroke-width:1px,color:#ff9f0a
+    
+    class START startNode
+    class WALLET,MYTWIN processNode
+    class NFT successNode
+    class T1,T2,T3 taskNode`,
+                'app-map': `flowchart TB
+    subgraph APP["twin3_main App"]
+        subgraph SIDEBAR["Sidebar"]
+            INIT["Verify Icon - 初始"]
+            ICONS["解鎖後顯示其他 Icon"]
+        end
+        subgraph CHAT["Chat Interface"]
+            BUBBLES["Hint Bubbles"]
+            WIDGETS["Widget Cards"]
+        end
+    end
+    
+    INIT --> WIDGETS
+    ICONS --> WIDGETS
+    
+    WIDGETS --> M1["TwinMatrixWidget"]
+    WIDGETS --> M2["InstagramConnectWidget"]
+    WIDGETS --> M3["GlobalDashboardWidget"]
+    WIDGETS --> M4["TaskOpportunityCard"]
+    
+    classDef appNode fill:transparent,stroke:#00d4ff,stroke-width:1px,color:#fff
+    classDef sidebarNode fill:transparent,stroke:#a78bfa,stroke-width:1px,color:#fff
+    classDef widgetNode fill:transparent,stroke:#30d158,stroke-width:1px,color:#fff
+    classDef componentNode fill:transparent,stroke:#ff9f0a,stroke-width:1px,color:#fff
+    
+    class APP appNode
+    class SIDEBAR,CHAT sidebarNode
+    class WIDGETS widgetNode
+    class M1,M2,M3,M4 componentNode`
+            };
+            
+            return `
+                <div class="mermaid-box" onclick="openFlowchartModal('${t('diagram.title')}', window.diagramCodes['ia-structure'])">
+                    <span class="expand-hint"><i data-lucide="maximize-2" style="width:14px;height:14px"></i> ${t('overview.view')}</span>
+                    <h3><i data-lucide="network" style="width:18px;height:18px;margin-right:8px;vertical-align:middle"></i>${t('diagram.title')}</h3>
+                <pre class="mermaid">
+flowchart TB
+    subgraph SITE["twin3.ai"]
+        direction TB
+        
+        subgraph GLOBAL["全站導覽"]
+            HEADER["Header 導覽"]
+            FOOTER["Footer 連結"]
+        end
+        
+        subgraph PAGES["主要頁面"]
+            HOME["Home /"]
+            MYTWIN["My Twin /dashboard"]
+            TASKS["Tasks /tasks/*"]
+            GENESIS["Genesis /genesis"]
+        end
+    end
+    
+    subgraph HEADER_ITEMS["Header 項目"]
+        H1["Logo → /"]
+        H2["WHITEPAPER → IEEE"]
+        H3["MY TWIN → /dashboard"]
+        H4["連接錢包"]
+    end
+    
+    subgraph FOOTER_ITEMS["Footer 項目"]
+        F1["社群連結 x4"]
+        F2["Whitepaper"]
+        F3["Tasks"]
+        F4["My Twin"]
+        F5["Newsletter"]
+    end
+    
+    subgraph HOME_SECTIONS["首頁區塊"]
+        HS1["Hero 區"]
+        HS2["Soulbound Twin 介紹"]
+        HS3["Soul Injection 介紹"]
+        HS4["Agentic Human 介紹"]
+        HS5["Plan Ch01-07"]
+    end
+    
+    subgraph MYTWIN_SECTIONS["My Twin 區塊"]
+        MS1["統計區 5個指標"]
+        MS2["Twin Matrix 256維度網格"]
+        MS3["幾何體展示 6種形狀"]
+        MS4["Update 面板 Soon"]
+    end
+    
+    subgraph TASK_PAGES["Tasks 頁面"]
+        T1["#001 Proof of Humanity"]
+        T2["#002 Invite Humans"]
+        T3["#003 Validate Network"]
+    end
+    
+    HEADER --> HEADER_ITEMS
+    FOOTER --> FOOTER_ITEMS
+    HOME --> HOME_SECTIONS
+    MYTWIN --> MYTWIN_SECTIONS
+    TASKS --> TASK_PAGES
+    
+    %% Semantic styling - stroke only, no fill
+    classDef primaryNode fill:transparent,stroke:#00d4ff,stroke-width:1px,color:#00d4ff
+    classDef secondaryNode fill:transparent,stroke:#a78bfa,stroke-width:1px,color:#a78bfa
+    classDef successNode fill:transparent,stroke:#30d158,stroke-width:1px,color:#30d158
+    classDef warningNode fill:transparent,stroke:#ff9f0a,stroke-width:1px,color:#ff9f0a
+    classDef infoNode fill:transparent,stroke:#3f3f46,stroke-width:1px,color:#fff
+    
+    class SITE primaryNode
+    class GLOBAL,PAGES secondaryNode
+    class HOME_SECTIONS,MYTWIN_SECTIONS,TASK_PAGES successNode
+    class HEADER_ITEMS,FOOTER_ITEMS infoNode
+                </pre></div>
+                
+                <div class="mermaid-box" onclick="openFlowchartModal('${t('diagram.user_flow')}', window.diagramCodes['user-flow'])">
+                    <span class="expand-hint"><i data-lucide="maximize-2" style="width:14px;height:14px"></i> ${t('overview.view')}</span>
+                    <h3><i data-lucide="git-branch" style="width:18px;height:18px;margin-right:8px;vertical-align:middle"></i>${t('diagram.user_flow')}</h3>
+                <pre class="mermaid">
+flowchart LR
+    subgraph USER_FLOW["使用者流程"]
+        START(("進入網站")) --> HOME["首頁"]
+        HOME --> |"Free Mint"| WALLET["連接錢包"]
+        HOME --> |"Start Now"| MYTWIN["My Twin"]
+        HOME --> |"Whitepaper"| WP["IEEE 論文"]
+        
+        WALLET --> MYTWIN
+        MYTWIN --> |"完成任務"| TASKS["Tasks"]
+        MYTWIN --> |"查看 NFT"| GENESIS["Genesis"]
+        
+        TASKS --> T1["Task #1 Humanity"]
+        TASKS --> T2["Task #2 Invite"]
+        TASKS --> T3["Task #3 Web3 Quiz"]
+        
+        T1 --> |"完成 L1+L2"| NFT["DNA NFT"]
+    end
+    
+    %% Semantic styling - stroke only
+    classDef startNode fill:transparent,stroke:#00d4ff,stroke-width:1px,color:#00d4ff
+    classDef processNode fill:transparent,stroke:#a78bfa,stroke-width:1px,color:#a78bfa
+    classDef successNode fill:transparent,stroke:#30d158,stroke-width:1px,color:#30d158
+    classDef taskNode fill:transparent,stroke:#ff9f0a,stroke-width:1px,color:#ff9f0a
+    
+    class START startNode
+    class WALLET,MYTWIN processNode
+    class NFT successNode
+    class T1,T2,T3 taskNode
+                </pre></div>
+                
+                <div class="mermaid-box" onclick="openFlowchartModal('${t('diagram.app_map')}', window.diagramCodes['app-map'])">
+                    <span class="expand-hint"><i data-lucide="maximize-2" style="width:14px;height:14px"></i> ${t('overview.view')}</span>
+                    <h3><i data-lucide="layers" style="width:18px;height:18px;margin-right:8px;vertical-align:middle"></i>${t('diagram.app_map')}</h3>
+                <pre class="mermaid">
+flowchart TB
+    subgraph APP["twin3_main App"]
+        subgraph SIDEBAR["Sidebar"]
+            INIT["Verify Icon - 初始"]
+            ICONS["解鎖後顯示其他 Icon"]
+        end
+        subgraph CHAT["Chat Interface"]
+            BUBBLES["Hint Bubbles"]
+            WIDGETS["Widget Cards"]
+        end
+    end
+    
+    INIT --> WIDGETS
+    ICONS --> WIDGETS
+    
+    WIDGETS --> M1["TwinMatrixWidget"]
+    WIDGETS --> M2["InstagramConnectWidget"]
+    WIDGETS --> M3["GlobalDashboardWidget"]
+    WIDGETS --> M4["TaskOpportunityCard"]
+    
+    %% App architecture styling - stroke only
+    classDef appNode fill:transparent,stroke:#00d4ff,stroke-width:1px,color:#fff
+    classDef sidebarNode fill:transparent,stroke:#a78bfa,stroke-width:1px,color:#fff
+    classDef widgetNode fill:transparent,stroke:#30d158,stroke-width:1px,color:#fff
+    classDef componentNode fill:transparent,stroke:#ff9f0a,stroke-width:1px,color:#fff
+    
+    class APP appNode
+    class SIDEBAR,CHAT sidebarNode
+    class WIDGETS widgetNode
+    class M1,M2,M3,M4 componentNode
+                </pre></div>`;
+        }
+
+        function renderHomepage() {
+            // Badge 顏色對應：互動=green, 外部=pink, 動畫=orange, 動態=purple, 展示=gray
+            let rows = DATA.homepage.map(h => `<tr data-section="${h.section}" data-name="${h.name}" data-status="${h.status}"><td><span class="badge badge-cyan">${h.section}</span></td><td>${h.name}</td><td>${h.content}</td><td>${h.cta}</td><td>${h.target}</td><td><span class="badge badge-${h.status === '互動' ? 'green' : h.status === '外部' ? 'pink' : h.status === '動畫' ? 'orange' : h.status === '動態' ? 'purple' : 'gray'}">${h.status}</span></td></tr>`).join('');
+            return `<div class="card"><div class="card-header"><span class="table-title" data-i18n="homepage.title">${t('homepage.title')} (Total ${DATA.homepage.length})</span></div>
+                <table id="homepage-table"><thead><tr><th onclick="sortTable('homepage-table', 0)" data-i18n="homepage.section">${t('homepage.section')} <i data-lucide="arrow-up-down" class="sort-icon" style="width:12px;height:12px"></i></th><th onclick="sortTable('homepage-table', 1)" data-i18n="homepage.component">${t('homepage.component')} <i data-lucide="arrow-up-down" class="sort-icon" style="width:12px;height:12px"></i></th><th data-i18n="homepage.content">${t('homepage.content')}</th><th data-i18n="homepage.cta">${t('homepage.cta')}</th><th data-i18n="homepage.target">${t('homepage.target')}</th><th onclick="sortTable('homepage-table', 5)" data-i18n="table.status">${t('table.status')} <i data-lucide="arrow-up-down" class="sort-icon" style="width:12px;height:12px"></i></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        }
+
+        function renderMyTwin() {
+            let statsRows = DATA.mytwin.stats.map(s => `<tr><td>${s.metric}</td><td>${s.desc}</td><td><span class="badge badge-gray">${s.type}</span></td></tr>`).join('');
+            let matrixRows = DATA.mytwin.matrix.map(m => `<tr><td>${m.element}</td><td>${m.desc}</td></tr>`).join('');
+            let shapeRows = DATA.mytwin.shapes.map(s => `<tr><td>${s.shape}</td><td>${s.name}</td><td><span class="badge badge-cyan">${s.color}</span></td></tr>`).join('');
+            let updateRows = DATA.mytwin.update.map(u => `<tr><td>${u.step}</td><td>${u.element}</td><td><span class="badge badge-${u.status === 'Soon' ? 'orange' : u.status === '互動' ? 'green' : 'gray'}">${u.status}</span></td></tr>`).join('');
+            return `<div class="grid-2">
+                <div class="card"><div class="card-header"><span class="table-title" data-i18n="mytwin.stats"><i data-lucide="bar-chart-2" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${t('mytwin.stats')}</span></div><table><thead><tr><th data-i18n="mytwin.metric">${t('mytwin.metric')}</th><th data-i18n="table.desc">${t('table.desc')}</th><th data-i18n="mytwin.interactive">${t('mytwin.interactive')}</th></tr></thead><tbody>${statsRows}</tbody></table></div>
+                <div class="card"><div class="card-header"><span class="table-title" data-i18n="mytwin.matrix"><i data-lucide="grid-3x3" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${t('mytwin.matrix')}</span></div><table><thead><tr><th data-i18n="mytwin.element">${t('mytwin.element')}</th><th data-i18n="table.desc">${t('table.desc')}</th></tr></thead><tbody>${matrixRows}</tbody></table></div>
+                <div class="card"><div class="card-header"><span class="table-title" data-i18n="mytwin.shapes"><i data-lucide="diamond" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${t('mytwin.shapes')}</span></div><table><thead><tr><th data-i18n="mytwin.shape">${t('mytwin.shape')}</th><th data-i18n="table.name">${t('table.name')}</th><th data-i18n="mytwin.color">${t('mytwin.color')}</th></tr></thead><tbody>${shapeRows}</tbody></table></div>
+                <div class="card"><div class="card-header"><span class="table-title" data-i18n="mytwin.update"><i data-lucide="refresh-cw" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${t('mytwin.update')}</span></div><table><thead><tr><th data-i18n="mytwin.step">${t('mytwin.step')}</th><th data-i18n="mytwin.element">${t('mytwin.element')}</th><th data-i18n="table.status">${t('table.status')}</th></tr></thead><tbody>${updateRows}</tbody></table></div>
+            </div>`;
+        }
+
+        function renderTasks() {
+            let rows = DATA.tasks.map(t => `<tr><td><span class="badge badge-cyan">${t.id}</span></td><td class="url">${t.path}</td><td><strong>${t.name}</strong></td><td>${t.desc}</td><td>${t.levels}</td><td>${t.reward}</td></tr>`).join('');
+            return `<div class="card"><div class="card-header"><span class="table-title" data-i18n="tasks.title">${t('tasks.title')}</span></div>
+                <table id="tasks-table"><thead><tr><th onclick="sortTable('tasks-table', 0)" data-i18n="table.id">${t('table.id')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('tasks-table', 1)" data-i18n="tasks.path">${t('tasks.path')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('tasks-table', 2)" data-i18n="table.name">${t('table.name')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('tasks-table', 3)" data-i18n="table.desc">${t('table.desc')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('tasks-table', 4)" data-i18n="tasks.level">${t('tasks.level')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('tasks-table', 5)" data-i18n="tasks.reward">${t('tasks.reward')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        }
+
+        function renderNavigation() {
+            // Badge 顏色對應：外部=pink, 互動=green, 內部=cyan, 社群=pink
+            let headerRows = DATA.header.map(h => `<tr><td>${h.item}</td><td class="url">${h.target}</td><td><span class="badge badge-${h.type === '外部' ? 'pink' : h.type === '互動' ? 'green' : 'cyan'}">${h.type}</span></td><td>${h.login}</td></tr>`).join('');
+            let footerRows = DATA.footer.map(f => `<tr><td>${f.link}</td><td class="url">${f.target}</td><td><span class="badge badge-${f.type === '社群' ? 'pink' : f.type === '內部' ? 'cyan' : 'gray'}">${f.type}</span></td><td>${f.newTab}</td></tr>`).join('');
+            return `<div class="grid-2">
+                <div class="card"><div class="card-header"><span class="table-title" data-i18n="navigation.header"><i data-lucide="arrow-up" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${t('navigation.header')}</span></div><table id="header-table"><thead><tr><th onclick="sortTable('header-table', 0)" data-i18n="navigation.item">${t('navigation.item')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('header-table', 1)" data-i18n="navigation.target">${t('navigation.target')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('header-table', 2)" data-i18n="table.type">${t('table.type')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('header-table', 3)" data-i18n="navigation.login">${t('navigation.login')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th></tr></thead><tbody>${headerRows}</tbody></table></div>
+                <div class="card"><div class="card-header"><span class="table-title" data-i18n="navigation.footer"><i data-lucide="arrow-down" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${t('navigation.footer')}</span></div><table id="footer-table"><thead><tr><th onclick="sortTable('footer-table', 0)" data-i18n="navigation.link">${t('navigation.link')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('footer-table', 1)" data-i18n="navigation.target">${t('navigation.target')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('footer-table', 2)" data-i18n="table.type">${t('table.type')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('footer-table', 3)" data-i18n="navigation.new_tab">${t('navigation.new_tab')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th></tr></thead><tbody>${footerRows}</tbody></table></div>
+            </div>`;
+        }
+
+        function renderExternal() {
+            let rows = DATA.external.map(e => `<tr><td>${e.name}</td><td class="url">${e.url}</td><td><span class="badge badge-cyan">${e.category}</span></td><td>${e.location}</td></tr>`).join('');
+            return `<div class="card"><div class="card-header"><span class="table-title" data-i18n="external.title">${t('external.title')}</span></div>
+                <table id="external-table"><thead><tr><th onclick="sortTable('external-table', 0)" data-i18n="table.name">${t('table.name')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('external-table', 1)" data-i18n="external.url">${t('external.url')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('external-table', 2)" data-i18n="overview.category">${t('overview.category')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('external-table', 3)" data-i18n="external.location">${t('external.location')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        }
+
+        function renderWidgets() {
+            // Stats - 所有都是待開發狀態
+            const todoWidgets = DATA.widgets.filter(w => w.status === 'todo').length;
+            const bubbleCount = DATA.bubbles.length;
+
+            // All items unified
+            let allRows = DATA.widgets.map(w => {
+                const checked = checkState[w.id] ? 'checked' : '';
+                return `<tr>
+                    <td><div class="checkbox ${checked}" onclick="toggleCheck('${w.id}')">${checked ? '<i data-lucide="check" style="width:14px;height:14px"></i>' : ''}</div></td>
+                    <td><span class="badge badge-cyan" data-i18n="table.widget">${t('table.widget')}</span></td>
+                    <td><strong>${w.name}</strong></td>
+                    <td><code>${w.trigger}</code></td>
+                    <td>${w.triggerWords}</td>
+                    <td>${w.interaction}</td>
+                    <td>${getStatusBadge(w.status)}</td>
+                </tr>`;
+            }).join('');
+
+            let bubbleRows = DATA.bubbles.map(b => `<tr>
+                <td>—</td>
+                <td><span class="badge badge-purple">${t(`status.${b.type}`)}</span></td>
+                <td><strong>${b.name}</strong></td>
+                <td><code>${b.component}</code></td>
+                <td>${b.source}</td>
+                <td>—</td>
+                <td>${getStatusBadge('todo')}</td>
+            </tr>`).join('');
+
+            return `
+                <div class="stats-grid" style="margin-bottom:24px">
+                    <div class="metric-card"><div class="metric-value">${todoWidgets}</div><div class="metric-label" data-i18n="stats.draft_widgets">${t('stats.draft_widgets')}</div></div>
+                    <div class="metric-card"><div class="metric-value">${bubbleCount}</div><div class="metric-label" data-i18n="stats.bubbles">${t('stats.bubbles')}</div></div>
+                    <div class="metric-card"><div class="metric-value">${todoWidgets + bubbleCount}</div><div class="metric-label" data-i18n="stats.total">${t('stats.total')}</div></div>
+                </div>
+                
+                <div class="card"><div class="card-header"><span class="table-title"><i data-lucide="layout-grid" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i><span data-i18n="title.widget_list">${t('title.widget_list')}</span></span></div>
+                <table id="widget-table"><thead><tr>
+                    <th style="width:50px" data-i18n="table.dev">${t('table.dev')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                    <th onclick="sortTable('widget-table', 1)" style="width:100px" data-i18n="table.type">${t('table.type')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                    <th onclick="sortTable('widget-table', 2)" data-i18n="table.name">${t('table.name')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                    <th onclick="sortTable('widget-table', 3)" style="width:120px" data-i18n="table.trigger_id">${t('table.trigger_id')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                    <th onclick="sortTable('widget-table', 4)" data-i18n="table.trigger_source">${t('table.trigger_source')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                    <th onclick="sortTable('widget-table', 5)" data-i18n="table.interaction">${t('table.interaction')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                    <th onclick="sortTable('widget-table', 6)" style="width:80px" data-i18n="table.status">${t('table.status')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th>
+                </tr></thead><tbody>${allRows}${bubbleRows}</tbody></table></div>`;
+        }
+
+        function renderTriggers() {
+            let rows = DATA.triggers.map(t => `<tr><td><code>${t.id}</code></td><td>${t.triggers}</td><td><span class="badge badge-${t.responseType === 'Widget' ? 'cyan' : t.responseType === 'Card' ? 'purple' : 'gray'}">${t.responseType}</span></td><td><code>${t.widget}</code></td><td>${t.suggestedActions}</td><td>${getStatusBadge(t.source)}</td></tr>`).join('');
+            return `<div class="card"><div class="card-header"><span class="table-title"><i data-lucide="zap" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>Trigger & Widget 完整對應表</span></div>
+                <table id="trigger-table"><thead><tr><th onclick="sortTable('trigger-table', 0)">ID <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('trigger-table', 1)">Triggers (關鍵詞) <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('trigger-table', 2)">Response Type <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('trigger-table', 3)">Widget / Card <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('trigger-table', 4)">Suggested Actions <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('trigger-table', 5)">來源 <i data-lucide="arrow-up-down" class="sort-icon"></i></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        }
+
+        function renderOnboarding() {
+            let nodeRows = DATA.onboardingNodes.map(n => `<tr><td><i data-lucide="${n.icon}" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${n.node}</td><td>${n.timing}</td></tr>`).join('');
+            return `<div class="mermaid-box"><h3><i data-lucide="rocket" style="width:18px;height:18px;margin-right:8px;vertical-align:middle"></i>${t('onboarding.title')}</h3>
+                <pre class="mermaid">
+flowchart TB
+    ENTRY(("用戶進入")) --> SIDEBAR["顯示側邊欄<br/>只有驗證 icon"]
+    SIDEBAR --> WELCOME["對話區顯示<br/>Onboarding 歡迎訊息"]
+    WELCOME --> ACTION{"用戶行為"}
+    
+    ACTION -- "點擊驗證" --> TRIGGER["觸發 InstagramConnectWidget"]
+    ACTION -- "閱讀訊息" --> BTN["顯示建議按鈕"]
+    
+    TRIGGER --> L1["Level 1: ReCAPTCHA"]
+    L1 --> L2["Level 2: Mobile Auth"]
+    L2 --> SUCCESS["驗證成功"]
+    
+    SUCCESS --> UNLOCK["解鎖更多觸發節點"]
+    UNLOCK --> SIDEBAR_FULL["側邊欄顯示:<br/>邀請 / 測驗 / 任務"]
+    SIDEBAR_FULL --> MATRIX["自動顯示 TwinMatrixWidget"]
+    MATRIX --> CARD["推薦任務 TaskOpportunityCard"]
+    
+    %% Semantic styling - stroke only
+    classDef entryNode fill:transparent,stroke:#00d4ff,stroke-width:1px,color:#00d4ff
+    classDef processNode fill:transparent,stroke:#a78bfa,stroke-width:1px,color:#a78bfa
+    classDef successNode fill:transparent,stroke:#30d158,stroke-width:1px,color:#30d158
+    classDef actionNode fill:transparent,stroke:#ff9f0a,stroke-width:1px,color:#ff9f0a
+    classDef systemNode fill:transparent,stroke:#3f3f46,stroke-width:1px,color:#fff
+    classDef widgetNode fill:transparent,stroke:#00d4ff,stroke-width:1px,color:#fff
+    
+    class ENTRY entryNode
+    class SUCCESS,UNLOCK successNode
+    class TRIGGER,L1,L2 processNode
+    class ACTION actionNode
+    class SIDEBAR,WELCOME,BTN,SIDEBAR_FULL systemNode
+    class MATRIX,CARD widgetNode
+                </pre></div>
+                <div class="card" style="margin-bottom:24px"><div class="card-header"><span class="table-title" data-i18n="onboarding.trigger_list"><i data-lucide="door-open" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${t('onboarding.trigger_list')}</span></div>
+                <table><thead><tr><th data-i18n="onboarding.node">${t('onboarding.node')}</th><th data-i18n="onboarding.timing">${t('onboarding.timing')}</th></tr></thead><tbody>${nodeRows}</tbody></table></div>
+                <div class="card" style="margin-bottom:24px"><div class="card-header"><span class="table-title" data-i18n="onboarding.stages"><i data-lucide="layout" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${t('onboarding.stages')}</span></div>
+                <table><thead><tr><th data-i18n="onboarding.stage">${t('onboarding.stage')}</th><th data-i18n="onboarding.sidebar_state">${t('onboarding.sidebar_state')}</th><th data-i18n="onboarding.chat_content">${t('onboarding.chat_content')}</th><th data-i18n="onboarding.trigger_cond">${t('onboarding.trigger_cond')}</th></tr></thead><tbody>
+                    <tr><td><span class="badge badge-gray">${t('onboarding.stage_enter')}</span></td><td>${t('onboarding.only_verify_icon')}</td><td>Onboarding 歡迎訊息</td><td>${t('onboarding.first_enter')}</td></tr>
+                    <tr><td><span class="badge badge-cyan">${t('onboarding.stage_click_verify')}</span></td><td>—</td><td>InstagramConnectWidget</td><td>${t('onboarding.click_verify')}</td></tr>
+                    <tr><td><span class="badge badge-orange">${t('onboarding.stage_verifying')}</span></td><td>—</td><td>Level 1/Level 2 按鈕</td><td>${t('onboarding.start_verify')}</td></tr>
+                    <tr><td><span class="badge badge-green">${t('onboarding.stage_unlock')}</span></td><td>${t('onboarding.invite_quiz_task')}</td><td>TwinMatrixWidget + TaskOpportunityCard</td><td>${t('onboarding.complete_verify')}</td></tr>
+                </tbody></table></div>`;
+        }
+
+        function renderPersonas() {
+            let cards = DATA.faqPersonas.map(p => {
+                let questions = p.questions.map(q => `<li>${q}</li>`).join('');
+                return `<div class="card" style="margin-bottom:16px"><div class="card-header"><span class="table-title"><i data-lucide="${p.icon}" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${p.persona}</span><span class="badge badge-purple" style="margin-left:auto">${p.motivation}</span></div>
+                <div class="card-body"><ul style="margin:0;padding-left:20px;color:var(--text-secondary)">${questions}</ul></div></div>`;
+            }).join('');
+            return `<div style="margin-bottom:24px;padding:16px;background:var(--bg-surface);border-radius:12px;border:1px solid var(--border-color)">
+                <h3 style="margin-bottom:8px" data-i18n="personas.title"><i data-lucide="help-circle" style="width:18px;height:18px;margin-right:8px;vertical-align:middle"></i>${t('personas.title')}</h3>
+                <p style="color:var(--text-secondary);font-size:14px" data-i18n="personas.desc">${t('personas.desc')}</p>
+            </div>
+            <div class="grid-2">${cards}</div>`;
+        }
+
+        function renderClassification() {
+            let rows = DATA.classification.map(c => `<tr><td>${c.module}</td><td><span class="badge badge-${c.category === 'Widget Card' ? 'cyan' : c.category === 'Hint Bubble' ? 'purple' : 'pink'}">${c.category}</span></td><td class="url">${c.source}</td><td><code>${c.component}</code></td><td>${c.desc}</td></tr>`).join('');
+            return `<div class="card"><div class="card-header"><span class="table-title" data-i18n="nav.classification"><i data-lucide="layout-grid" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${t('nav.classification')}</span></div>
+                <table id="classification-table"><thead><tr><th onclick="sortTable('classification-table', 0)" data-i18n="table.name">${t('table.name')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('classification-table', 1)" data-i18n="overview.category">${t('overview.category')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('classification-table', 2)" data-i18n="table.source">${t('table.source')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('classification-table', 3)" data-i18n="homepage.component">${t('homepage.component')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('classification-table', 4)" data-i18n="table.desc">${t('table.desc')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        }
+
+        function renderWeb2Accounts() {
+            let rows = DATA.web2Accounts.map(a => `<tr><td><i data-lucide="${a.icon}" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${a.platform}</td><td><span class="badge badge-${a.priority === 'P0' ? 'cyan' : a.priority === 'P1' ? 'purple' : 'gray'}">${a.priority}</span></td><td>${a.desc}</td><td><code>${a.authMethod}</code></td><td>${getStatusBadge(a.status)}</td></tr>`).join('');
+            return `<div style="margin-bottom:24px;padding:16px;background:var(--bg-surface);border-radius:12px;border:1px solid var(--border-color)">
+                <h3 style="margin-bottom:8px" data-i18n="title.web2_accounts"><i data-lucide="link" style="width:18px;height:18px;margin-right:8px;vertical-align:middle"></i>${t('title.web2_accounts')}</h3>
+                <p style="color:var(--text-secondary);font-size:14px" data-i18n="desc.web2">${t('desc.web2')}</p>
+            </div>
+            <div class="card"><div class="card-header"><span class="table-title"><i data-lucide="share-2" style="width:16px;height:16px;margin-right:8px;vertical-align:middle"></i>${t('title.web2_accounts')}</span></div>
+                <table id="web2-table"><thead><tr><th onclick="sortTable('web2-table', 0)">${t('table.platform')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('web2-table', 1)">${t('table.priority')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('web2-table', 2)">${t('table.desc')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('web2-table', 3)">${t('table.auth_method')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th><th onclick="sortTable('web2-table', 4)">${t('table.status')} <i data-lucide="arrow-up-down" class="sort-icon"></i></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        }
+
+        // ===================== SORT =====================
+        let sortDir = {};
+        function sortTable(tableId, colIdx) {
+            const table = document.getElementById(tableId);
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const dir = sortDir[tableId + colIdx] = !sortDir[tableId + colIdx];
+            rows.sort((a, b) => {
+                const aText = a.cells[colIdx]?.innerText || '';
+                const bText = b.cells[colIdx]?.innerText || '';
+                return dir ? aText.localeCompare(bText) : bText.localeCompare(aText);
+            });
+            rows.forEach(r => tbody.appendChild(r));
+        }
+
+        // ===================== INIT =====================
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Theme provider is already initialized above
+            
+            // 2. Init Responsive (now uses theme provider state)
+            initResponsive();
+
+            // 3. Update page language using theme provider
+            themeProvider.context.i18n.updatePageLanguage();
+
+            // 4. Initial Render - use theme provider's current section
+            showSection(themeProvider.context.state.currentSection);
+
+            // 5. Init Libs with Design System Theme
+            mermaid.initialize({ 
+                startOnLoad: false, 
+                theme: 'dark',
+                themeVariables: {
+                    // Primary colors from design system
+                    primaryColor: themeProvider.getToken('colors.accent.cyan') || '#00d4ff',
+                    primaryTextColor: themeProvider.getToken('colors.white') || '#ffffff',
+                    primaryBorderColor: themeProvider.getToken('colors.accent.cyan') || '#00d4ff',
+                    
+                    // Secondary colors
+                    secondaryColor: themeProvider.getToken('colors.accent.purple') || '#a78bfa',
+                    secondaryTextColor: themeProvider.getToken('colors.white') || '#ffffff',
+                    secondaryBorderColor: themeProvider.getToken('colors.accent.purple') || '#a78bfa',
+                    
+                    // Background colors
+                    background: themeProvider.getToken('colors.bg.primary') || '#0f1014',
+                    mainBkg: themeProvider.getToken('colors.bg.card') || '#252830',
+                    secondBkg: themeProvider.getToken('colors.bg.surface') || '#1a1c22',
+                    tertiaryColor: themeProvider.getToken('colors.border') || '#3f3f46',
+                    
+                    // Text colors
+                    textColor: themeProvider.getToken('colors.text.primary') || '#ffffff',
+                    lineColor: '#6b7280',
+                    
+                    // Node colors
+                    fillType0: themeProvider.getToken('colors.bg.card') || '#252830',
+                    fillType1: themeProvider.getToken('colors.bg.surface') || '#1a1c22',
+                    fillType2: themeProvider.getToken('colors.bg.sidebar') || '#111216',
+                    
+                    // Success/Error states
+                    cScale0: themeProvider.getToken('colors.semantic.success') || '#30d158',
+                    cScale1: themeProvider.getToken('colors.semantic.warning') || '#ff9f0a',
+                    cScale2: themeProvider.getToken('colors.semantic.error') || '#ff3b30',
+                    
+                    // Font
+                    fontFamily: themeProvider.getToken('typography.fontFamily.sans') || 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                    fontSize: '14px'
+                },
+                flowchart: {
+                    useMaxWidth: true,
+                    htmlLabels: true,
+                    curve: 'basis'
+                },
+                securityLevel: 'loose'
+            });
+            
+            lucide.createIcons();
+            
+            // 7. Subscribe to theme changes for debugging
+            themeProvider.subscribe((event, data, context) => {
+                console.log(`Theme event: ${event}`, data);
+                updateThemeStatus();
+            });
+            
+            // 8. Update theme status indicator
+            updateThemeStatus();
+            
+            console.log('✅ Application initialized with theme provider');
+        });
+        
+        // Update theme status indicator (for debugging)
+        function updateThemeStatus() {
+            const statusElement = document.getElementById('theme-status-text');
+            if (statusElement) {
+                const context = themeProvider.getContext();
+                const status = `${context.state.currentLanguage} | ${context.state.currentSection}`;
+                statusElement.textContent = `Theme: ${status}`;
+            }
+        }
+        
+        // Theme status is hidden by default (display: none in HTML)
+        // Uncomment below to show in development mode if needed
+        // if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        //     document.addEventListener('DOMContentLoaded', () => {
+        //         const themeStatus = document.getElementById('theme-status');
+        //         if (themeStatus) {
+        //             themeStatus.style.display = 'block';
+        //         }
+        //     });
+        // }
+        
+        // ===================== FLOWCHART MODAL =====================
+        function openFlowchartModal(title, mermaidCode) {
+            const modal = document.getElementById('flowchart-modal');
+            const modalTitle = document.getElementById('flowchart-modal-title');
+            const modalContent = document.getElementById('flowchart-modal-mermaid');
+            
+            modalTitle.textContent = title;
+            modalContent.innerHTML = `<pre class="mermaid">${mermaidCode}</pre>`;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Re-render mermaid in modal
+            mermaid.run();
+        }
+        
+        function closeFlowchartModal() {
+            const modal = document.getElementById('flowchart-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeFlowchartModal();
+            }
+        });
+        
+        // Close modal on backdrop click
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('flowchart-modal');
+            if (e.target === modal) {
+                closeFlowchartModal();
+            }
+        });
+    </script>
+    
+    <!-- Flowchart Modal -->
+    <div id="flowchart-modal" class="flowchart-modal">
+        <div class="flowchart-modal-header">
+            <h2 id="flowchart-modal-title" class="flowchart-modal-title"></h2>
+            <button class="flowchart-modal-close" onclick="closeFlowchartModal()">
+                <i data-lucide="x" style="width:16px;height:16px"></i>
+                <span>關閉</span>
+            </button>
+        </div>
+        <div class="flowchart-modal-content">
+            <div id="flowchart-modal-mermaid"></div>
+        </div>
+    </div>
+</body>
+
+</html>
